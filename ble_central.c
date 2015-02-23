@@ -1,5 +1,6 @@
 /*
 * Compile using: gcc ble_central.c -o ble_central
+* db = carDB; tbl = log; sql = create table log(id integer primary key, sender text, recipient text, service_uuid integer, command integer);
 */
 
 
@@ -35,10 +36,12 @@ int main(int argc, char *argv[])
 
         //Scan for devices
         //See if whitelist broadcast devices are in range
-        //Connect if htey are, raise error if not
+        //Connect if they are, raise error if not
         
         //Assuming C4:4F:B7:B1:41:D7 is in range
         system("sudo gatttool -b C4:4F:B7:B1:41:D7 --char-write-req --handle=0x000f --value=0100 --listen");
+        
+        //read each line of incoming text, and do something with it
     }
     else
     {   //PARENT PROCESS
