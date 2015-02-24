@@ -1,6 +1,13 @@
 /*
 * Compile using: gcc ble_central.c -o ble_central
 * db = carDB; tbl = log; sql = create table log(id integer primary key, sender text, recipient text, service_uuid integer, command integer);
+*
+*
+*   BLE node MAC 	= C4:4F:B7:B1:41:D7
+*	PC MAC 			= 00:02:72:D9:FA:ED
+* to set up beacon from commandline: sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00 00 00 00 00 00 00 00 00 00 00 00 00
+* to then advertise: sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00 00 00 00 00 00 00 00 00 00 00 00 00
+
 */
 
 
@@ -13,6 +20,18 @@
 #include <sys/wait.h>
 
 extern char **environ;
+
+char * getValue(char *_input)
+{
+	char **ap, *argv[10], *inputstring;
+
+   	for (ap = argv; (*ap = strsep(&inputstring, " \t")) != NULL;)
+           if (**ap != '\0')
+                   if (++ap >= &argv[10])
+                           break;
+                                   
+	return 	argv[sizeof(argv)];
+}
 
 int main(int argc, char *argv[])
 {
@@ -46,11 +65,12 @@ int main(int argc, char *argv[])
         //read each line of incoming text
         while (fgets(buf, sizeof(buf), ble_listen) != 0) {
             printf("%s", buf);
+            //printf("Value = %s", getValue(buf));
+            
+            //log it in transaction log
+	        //send it on
         }
-        
-        //log it in transaction log
-        //send it on
-        
+               
         pclose(ble_listen);
     }
     else
