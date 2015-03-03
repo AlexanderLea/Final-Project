@@ -6,8 +6,7 @@
 *   BLE node MAC 	= C4:4F:B7:B1:41:D7
 *	PC MAC 			= 00:02:72:D9:FA:ED
 * to set up beacon from commandline: sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00 00 00 00 00 00 00 00 00 00 00 00 00
-* to then advertise: sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00 00 00 00 00 00 00 00 00 00 00 00 00
-
+* to then advertise: sudo hciconfig hcix leadv
 */
 
 
@@ -36,7 +35,7 @@ char * getValue(char *_input)
 int main(int argc, char *argv[])
 {
     //setup GATT server
-
+//how to call serverUp from gatt_Service.c - need to include in makefile	serverUp();
 
     //proces ID
     pid_t pid;
@@ -53,7 +52,7 @@ int main(int argc, char *argv[])
     //Fork was successful
     if (pid == 0) { //CHILD PROCESS
 
-        //Scan for devices
+        //Scan for devices (should this be done in another thread?)
         //See if whitelist broadcast devices are in range
         //Connect if they are, raise error if not
         
@@ -64,11 +63,13 @@ int main(int argc, char *argv[])
         
         //read each line of incoming text
         while (fgets(buf, sizeof(buf), ble_listen) != 0) {
-            printf("%s", buf);
+            //printf("%s", buf);
             //printf("Value = %s", getValue(buf));
             
             //log it in transaction log
 	        //send it on
+	        
+//	        sendCommand();
         }
                
         pclose(ble_listen);
