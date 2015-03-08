@@ -7,25 +7,48 @@
 #include "attrib-server.h"
 #include "att.h"
 
+#define BROADCASTER_SVC_UUID		0x2A67
+#define BROADCASTER_UUID		0x1817
+
 bool serverUp = false;
 
-void serverUp(){
+struct gatt_example_adapter 
+{
+	struct btd_adapter	*adapter;
+	GSList			*sdp_handles;
+};
+
+void serverUp()
+{
 //set security level to high ?
 	serverUp = true;
 	
-	//FROM: http://stackoverflow.com/questions/21428446/bluetooth-low-energy-use-bluez-stack-as-a-peripheral-with-custom-services-and
-	gatt_service_add(adapter, GATT_PRIM_SVC_UUID, 0xFFFF,
-    /* Char 1 */
-    GATT_OPT_CHR_UUID16, 0xAAAA,
-    GATT_OPT_CHR_PROPS, ATT_CHAR_PROPER_READ,
-    GATT_OPT_CHR_VALUE_CB, ATTRIB_READ, read_func_callback,
+	bt_uuid_t uuid;
 
-    /* Char 2 Define here */
-    ...
-    /* Char 3 Define here */
-    ...
-    GATT_OPT_INVALID);
+	bt_uuid16_create(&uuid, BROADCASTER_SVC_UUID);
+
+	return gatt_service_add(adapter, GATT_PRIM_SVC_UUID, &uuid,
+			/* Broadcaster characteristic */
+			GATT_OPT_CHR_UUID16, BROADCASTER_UUID,
+			GATT_OPT_CHR_PROPS, GATT_CHR_PROP_READ |
+							GATT_CHR_PROP_NOTIFY,
+			GATT_OPT_CHR_VALUE_CB, ATTRIB_READ,
+						command_read, adapter,
+
+			GATT_OPT_INVALID);
  
+}
+
+static uint8_t command_read(struct attribute *a,
+				  struct btd_device *device, gpointer user_data)
+{
+	struct btd_adapter *adapter = user_data;
+	uint8_t value;
+
+	value = 0x04;
+	attrib_db_update(adapter, a->handle, NULL, &value, sizeof(value), NULL);
+
+	return 0;
 }
 
 void serverDown(){
@@ -40,6 +63,8 @@ void sendCommand(){
 
 int main(int argc, char *argv[])
 {
+
+/*
     //proces ID
     pid_t pid;
     pid_t wpid;
@@ -56,11 +81,12 @@ int main(int argc, char *argv[])
     if (pid == 0) { //CHILD PROCESS
 	    //Setup service
 	    //currntly beacon
-		system("sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00 00 00 00 00 00 00 00 00 00 00 00 00");
+		
+		//system("sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00 00 00 00 00 00 00 00 00 00 00 00 00");
 
 		//advertise
 		system("");    
 	}
-	
+	*/
 	return 0;
 }	
