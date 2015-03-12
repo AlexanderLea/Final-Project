@@ -1,4 +1,4 @@
-
+#include "lib/uuid.h"
 #include "src/plugin.h"
 #include "src/adapter.h"
 #include "src/shared/util.h"
