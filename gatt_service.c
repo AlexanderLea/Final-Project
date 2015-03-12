@@ -21,15 +21,34 @@ struct gatt_example_adapter
 	GSList			*sdp_handles;
 };
 
-void serverUp()
+void serverUp(struct btd_adapter *adapter)
 {
 //set security level to high ?
-	serverUp = true;
 	
+	
+	if (!register_broadcast_service(adapter)) 
+	{
+		//TODO: Log error
+		//TODO: Remove gatt adapter - gatt_example_adapter_free(gadapter);
+		
+		serverUp = false;
+		
+	}
+	else 
+	{
+		serverUp = true;
+	}
+ 
+}
+
+static gboolean register_broadcast_service(struct btd_adapter *adapter)
+{
+	//create different uuid ??
 	bt_uuid_t uuid;
 
 	bt_uuid16_create(&uuid, BROADCASTER_SVC_UUID);
 
+	//create GATT server
 	return gatt_service_add(adapter, GATT_PRIM_SVC_UUID, &uuid,
 			/* Broadcaster characteristic */
 			GATT_OPT_CHR_UUID16, BROADCASTER_UUID,
@@ -37,9 +56,7 @@ void serverUp()
 							GATT_CHR_PROP_NOTIFY,
 			GATT_OPT_CHR_VALUE_CB, ATTRIB_READ,
 						command_read, adapter,
-
 			GATT_OPT_INVALID);
- 
 }
 
 static uint8_t command_read(struct attribute *a,
