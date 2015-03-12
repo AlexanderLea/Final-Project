@@ -1,13 +1,16 @@
-#include <config.h>
-#include <glib.h>
-#include <bluetooth/uuid.h>
-#include "plugin.h"
-#include "hcid.h"
-#include "log.h"
-#include "attrib-server.h"
-#include "att.h"
 
-#define BROADCASTER_SVC_UUID		0x2A67
+#include "src/plugin.h"
+#include "src/adapter.h"
+#include "src/shared/util.h"
+#include "src/log.h"
+#include "attrib/gattrib.h"
+#include "attrib/gatt-service.h"
+#include "attrib/att.h"
+#include "attrib/gatt.h"
+#include "attrib/att-database.h"
+#include "src/attrib-server.h"
+
+#define BROADCASTER_SVC_UUID	0x2A67
 #define BROADCASTER_UUID		0x1817
 
 bool serverUp = false;
