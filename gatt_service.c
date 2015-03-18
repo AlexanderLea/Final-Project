@@ -31,14 +31,12 @@ void serverUp(struct btd_adapter *adapter)
 		//TODO: Log error
 		//TODO: Remove gatt adapter - gatt_example_adapter_free(gadapter);
 		
-		serverUp = false;
-		
+		serverUp = false;		
 	}
 	else 
 	{
 		serverUp = true;
-	}
- 
+	} 
 }
 
 static gboolean register_broadcast_service(struct btd_adapter *adapter)
