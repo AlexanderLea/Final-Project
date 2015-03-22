@@ -123,10 +123,11 @@ static void broadcast_exit(void)
 	btd_profile_unregister(&broadcast_profile);
 }
 
+/*
 int main(int argc, char *argv[])
 {
 
-/*
+
     //proces ID
     pid_t pid;
     pid_t wpid;
@@ -149,6 +150,6 @@ int main(int argc, char *argv[])
 		//advertise
 		system("");    
 	}
-	*/
+	
 	return 0;
-}	
+}	*/
