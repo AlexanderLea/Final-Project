@@ -1,19 +1,53 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <errno.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include <glib.h>
+
+#include "lib/bluetooth.h"
+#include "lib/sdp.h"
 #include "lib/uuid.h"
-#include "src/plugin.h"
+
 #include "src/adapter.h"
-#include "src/shared/util.h"
-#include "src/log.h"
+#include "src/device.h"
+#include "src/profile.h"
+#include "src/plugin.h"
 #include "attrib/gattrib.h"
-#include "attrib/gatt-service.h"
 #include "attrib/att.h"
 #include "attrib/gatt.h"
 #include "attrib/att-database.h"
+#include "src/shared/util.h"
 #include "src/attrib-server.h"
+#include "attrib/gatt-service.h"
+#include "src/log.h"
 
 #define BROADCASTER_SVC_UUID	0x2A67
 #define BROADCASTER_UUID		0x1817
 
-bool serverUp = false;
+enum {
+	UPDATE_RESULT_SUCCESSFUL = 0,
+	UPDATE_RESULT_CANCELED = 1,
+	UPDATE_RESULT_NO_CONN = 2,
+	UPDATE_RESULT_ERROR = 3,
+	UPDATE_RESULT_TIMEOUT = 4,
+	UPDATE_RESULT_NOT_ATTEMPTED = 5,
+};
+
+enum {
+	UPDATE_STATE_IDLE = 0,
+	UPDATE_STATE_PENDING = 1,
+};
+
+enum {
+	GET_REFERENCE_UPDATE = 1,
+	CANCEL_REFERENCE_UPDATE = 2,
+};
+
+//bool serverUp = false;
 
 struct gatt_example_adapter 
 {
@@ -21,27 +55,21 @@ struct gatt_example_adapter
 	GSList			*sdp_handles;
 };
 
-void serverUp(struct btd_adapter *adapter)
+static uint8_t command_read(struct attribute *a,
+				  struct btd_device *device, gpointer user_data)
 {
-//set security level to high ?
-	
-	
-	if (!register_broadcast_service(adapter)) 
-	{
-		//TODO: Log error
-		//TODO: Remove gatt adapter - gatt_example_adapter_free(gadapter);
-		
-		serverUp = false;		
-	}
-	else 
-	{
-		serverUp = true;
-	} 
+	struct btd_adapter *adapter = user_data;
+	uint8_t value;
+
+	value = 0x04;
+	attrib_db_update(adapter, a->handle, NULL, &value, sizeof(value), NULL);
+
+	return 0;
 }
 
 static gboolean register_broadcast_service(struct btd_adapter *adapter)
 {
-	//create different uuid ??
+	//CReate UUID
 	bt_uuid_t uuid;
 
 	bt_uuid16_create(&uuid, BROADCASTER_SVC_UUID);
@@ -57,26 +85,42 @@ static gboolean register_broadcast_service(struct btd_adapter *adapter)
 			GATT_OPT_INVALID);
 }
 
-static uint8_t command_read(struct attribute *a,
-				  struct btd_device *device, gpointer user_data)
+static int time_server_init(struct btd_profile *p, struct btd_adapter *adapter)
 {
-	struct btd_adapter *adapter = user_data;
-	uint8_t value;
+	const char *path = adapter_get_path(adapter);
 
-	value = 0x04;
-	attrib_db_update(adapter, a->handle, NULL, &value, sizeof(value), NULL);
+	DBG("path %s", path);
+
+	if (!register_broadcast_service(adapter)) {
+		error("Broadcast Service could not be registered");
+		return -EIO;
+	}
 
 	return 0;
 }
 
-void serverDown(){
-	serverUp = false;
+static void broadcast_server_exit(struct btd_profile *p,
+						struct btd_adapter *adapter)
+{
+	const char *path = adapter_get_path(adapter);
+
+	DBG("path %s", path);
 }
 
-void sendCommand(){
-	if(serverUp){
-		//send the command
-	}
+struct btd_profile broadcast_profile = {
+	.name		= "gatt-broadcast-server",
+	.adapter_probe	= time_server_init,
+	.adapter_remove	= time_server_exit,
+};
+
+static int broadcast_init(void)
+{
+	return btd_profile_register(&broadcast_profile);
+}
+
+static void broadcast_exit(void)
+{
+	btd_profile_unregister(&broadcast_profile);
 }
 
 int main(int argc, char *argv[])
