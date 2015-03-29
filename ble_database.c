@@ -9,58 +9,45 @@
                 
 int server_log_add(char *source, char *message) {
     
-    sqlite3 *db;
-    char *err_msg = 0;
+    	sqlite3 *db;
+    	char *err_msg = 0;
+	sqlite3_stmt *stmt;
     
-    int rc = sqlite3_open("log.db", &db);
+   	 int rc = sqlite3_open("log.db", &db);
     
-    if (rc != SQLITE_OK) {
+  	  if (rc != SQLITE_OK) {
+   	     
+		fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+		sqlite3_close(db);
+		
+		return 1;
+    	}
+    	
+    	char *sql = "INSERT INTO server_log(log_source, log_message) VALUES(?,?)";
         
-        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-        
-        return 1;
-    }
+    	rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+	
+	if(rc == SQLITE_OK) {
+		sqlite3_bind_text(stmt, 1, source, strlen(source), 0);
+		sqlite3_bind_text(stmt, 2, message, strlen(message), 0);
+		
+		sqlite3_step(stmt);
+    		sqlite3_finalize(stmt);				
+	}
+	
+	sqlite3_close(db);
     
-    //construct string
-    char *base = "INSERT INTO server_log(log_source, log_message) VALUES(\"";
-    char *join = "\", \"";
-    char *end = "\");";
-        
-    char *sql = malloc(strlen(base) + strlen(source) 
-    	+ strlen(join) + strlen(end) + strlen(message));
-    strcpy(sql, base);
-    strcat(sql, source);
-    strcat(sql, join);
-    strcat(sql, message);
-    strcat(sql, end);
-
-    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);        
-    
-    free(sql);
-    
-    if (rc != SQLITE_OK ) {
-        
-        fprintf(stderr, "SQL error: %s\n", err_msg);
-        
-        sqlite3_free(err_msg);        
-        sqlite3_close(db);
-        
-        return 1;
-    } 
-    
-    sqlite3_close(db);
-    
-    if(err_msg == 0)
-    	return 1;
-    else
-    	return 0;
+	if(err_msg == 0)
+		return 1;
+	else
+		return 0;
 }
 
 int comms_log_add(char *direction, char *from, char *contents, int log_type) {
     
 	sqlite3 *db;
 	char *err_msg = 0;
+	sqlite3_stmt *stmt;
 
 	int rc = sqlite3_open("log.db", &db);
 
@@ -72,47 +59,20 @@ int comms_log_add(char *direction, char *from, char *contents, int log_type) {
 		return 1;
 	}
 
-	//char *sql = "INSERT INTO communication_log(message_direction, message_from, message_contents, comms_log_type) VALUES(\"direction\", \"from\", \"contents\", \"log_type\");";
-
-	//construct string
-	char *base = "INSERT INTO communication_log(message_direction, message_from, message_contents, comms_log_type) VALUES(\"";
-	char *join = "\", \"";
-	char *string_int_join = "\", ";
-	char *end = ");";
-
-	char char_log_type[2];	
-	snprintf(char_log_type, sizeof(char_log_type), "%d", log_type);
-
-	//work out length
-	char *sql = malloc(strlen(base) + strlen(direction) 
-	+ strlen(join) + strlen(from) + strlen(join) + strlen(contents)
-	+ strlen(string_int_join) + strlen(char_log_type) + strlen(end));
-
-	strcpy(sql, base);
-	strcat(sql, direction);
-	strcat(sql, join);
-	strcat(sql, from);
-	strcat(sql, join);
-	strcat(sql, contents);
-	strcat(sql, string_int_join);
-	strcat(sql, char_log_type);
-	strcat(sql, end);
-
-	fprintf(stdout, sql);
+	char *sql = "INSERT INTO communication_log(message_direction, message_from, message_contents, comms_log_type) VALUES(?, ?, ?, ?);";
 	
-	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	free(sql);
+	rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 	
-	if (rc != SQLITE_OK ) {
-		fprintf(stderr, "SQL error: %s\n", err_msg);
-
-		sqlite3_free(err_msg);        
-		sqlite3_close(db);
-
-		return 1;
-	} 
-
+	if(rc == SQLITE_OK) {
+		sqlite3_bind_text(stmt, 1, direction, strlen(direction), 0);
+		sqlite3_bind_text(stmt, 2, from, strlen(from), 0);
+		sqlite3_bind_text(stmt, 3, contents, strlen(contents), 0);
+		sqlite3_bind_int(stmt, 4, log_type);
+		
+		sqlite3_step(stmt);
+    		sqlite3_finalize(stmt);				
+	}
+	
 	sqlite3_close(db);
 
 	if(err_msg == 0)
@@ -122,7 +82,7 @@ int comms_log_add(char *direction, char *from, char *contents, int log_type) {
 }
 
 /*
-char* whitelist_get(){
+char* whitelist_read(){
  	sqlite3 *db;
    	char *err_msg = 0;
     
