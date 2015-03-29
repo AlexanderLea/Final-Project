@@ -18,6 +18,8 @@
 #include <string.h>
 #include <sys/wait.h>
 
+#include "ble_database.h"
+
 extern char **environ;
 
 char * getValue(char *_input)
