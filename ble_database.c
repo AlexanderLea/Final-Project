@@ -81,8 +81,7 @@ int comms_log_add(char *direction, char *from, char *contents, int log_type) {
 		return 0;
 }
 
-
-void whitelist_mac_read(int _whitelistSize, char *data[_whitelistSize]){
+void getListWhitelistMAC(int _whitelistSize, char *data[_whitelistSize]){
  	sqlite3 *db;  	
 	sqlite3_stmt *stmt;
 	int row = 0;
