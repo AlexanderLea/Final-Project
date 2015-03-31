@@ -74,8 +74,15 @@ int main(int argc, char *argv[])
 	    	if (pid == 0) { //CHILD PROCESS        
 		
 			//Assuming C4:4F:B7:B1:41:D7 is in range and connectable
+			
+			char *cmd;
+			strcpy(cmd, "sudo gatttool -b ");
+			strcat(cmd, whitelist[i]);
+			strcat(cmd, "--char-write-req --handle=0x000f --value=0100 --listen");
+
+//TODO: Don't think this works!			
 			FILE *ble_listen 
-				= popen("sudo gatttool -b C4:4F:B7:B1:41:D7 --char-write-req --handle=0x000f --value=0100 --listen", "r");        
+				= popen(cmd, "r");        
 			char buf[1024];              
 		
 			//read each line of incoming text
@@ -97,7 +104,8 @@ int main(int argc, char *argv[])
 			    	//printf("%s\n", sub);
 			    	
 				//log it in transaction log		
-				comms_log_add("IN", "C4:4F:B7:B1:41:D7", sub, 1);
+//TODO: error here!
+				comms_log_add("IN", whitelist[i], sub, 1);
 			
 				//send it on			
 			}
