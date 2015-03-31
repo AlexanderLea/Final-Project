@@ -16,7 +16,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
-//#include "ble_database.h"
+#include "ble_database.h"
 
 extern char **environ;
 
@@ -51,58 +51,67 @@ int main(int argc, char *argv[])
 
 	//Scan for devices (should this be done in another thread?)
 	//Foreach device in whitelist, do:
+	int whitelistSize = getWhitelistSize();	
+	char *whitelist[whitelistSize];	
+	getListWhitelistMAC(whitelistSize, whitelist);
+	int i = 0;
 	
-	//process IDs
-   	pid_t pid;
-    	pid_t wpid;
+	for(i =0; i < whitelistSize; i++){
+			
+		//process IDs
+	   	pid_t pid;
+	    	pid_t wpid;
 
-    	//fork the process
-    	pid = fork();
-	if (pid == -1) {
-		printf("Failed to fork()\n"); 
-        	//TODO: return valid error here, rather than exiting
-		exit(13);
-    	}
-    
-    	//Fork was successful
-    	if (pid == 0) { //CHILD PROCESS        
-        
-		//Assuming C4:4F:B7:B1:41:D7 is in range and connectable
-		FILE *ble_listen 
-			= popen("sudo gatttool -b C4:4F:B7:B1:41:D7 --char-write-req --handle=0x000f --value=0100 --listen", "r");        
-		char buf[1024];              
-        
-		//read each line of incoming text
-		while (fgets(buf, sizeof(buf), ble_listen) != 0) {
-			//printf("%s", buf);
-		   	//printf("Value = %s", getValue(buf));
-		    
-			//want substring of: Notification handle = 0x000e value: 2a 20 00 20 10 3f 00 20
-			//TODO: There must be a nicer way of doing this!
-			char *sub;
-			int position = 37, length = 23, c = 0;
-		 
-			while (c < length) {
-	      			sub[c] = buf[position+c-1];
-	      			c++;
-	   		}
-	   		sub[c] = '\0';
-		    
-		    	printf("%s\n", sub);
-		    	
-			//log it in transaction log
-			//send it on			
+	    	//fork the process
+	    	pid = fork();
+		if (pid == -1) {
+			printf("Failed to fork()\n"); 
+			//TODO: return valid error here, rather than exiting
+			exit(13);
+	    	}
+	    
+	    	//Fork was successful
+	    	if (pid == 0) { //CHILD PROCESS        
+		
+			//Assuming C4:4F:B7:B1:41:D7 is in range and connectable
+			FILE *ble_listen 
+				= popen("sudo gatttool -b C4:4F:B7:B1:41:D7 --char-write-req --handle=0x000f --value=0100 --listen", "r");        
+			char buf[1024];              
+		
+			//read each line of incoming text
+			while (fgets(buf, sizeof(buf), ble_listen) != 0) {
+				//printf("%s", buf);
+			   	//printf("Value = %s", getValue(buf));
+			    
+				//want substring of: Notification handle = 0x000e value: 2a 20 00 20 10 3f 00 20
+				//TODO: There must be a nicer way of doing this!
+				char *sub;
+				int position = 37, length = 23, c = 0;
+			 
+				while (c < length) {
+		      			sub[c] = buf[position+c-1];
+		      			c++;
+		   		}
+		   		sub[c] = '\0';
+			    
+			    	//printf("%s\n", sub);
+			    	
+				//log it in transaction log		
+				comms_log_add("IN", "C4:4F:B7:B1:41:D7", sub, 1);
+			
+				//send it on			
+			}
+			       
+			pclose(ble_listen);
 		}
-		       
-		pclose(ble_listen);
-	}
-	else
-    	{   //PARENT PROCESS
-		int status;
+		else
+	    	{   //PARENT PROCESS
+			int status;
 		
-		//Wait for the child to exit
-		wpid = wait(&status);
+			//Wait for the child to exit
+			wpid = wait(&status);
 		
+	    	}
     	}
     
     	return 0;
