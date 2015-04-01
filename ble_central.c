@@ -15,34 +15,87 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <pthread.h>
 
 #include "ble_database.h"
 
 extern char **environ;
+pthread_mutex_t lock;
 
-/*char * getValue(char *_input)
-{
-	/*char **ap, *valueString;
+/* This is our thread function.  It is like main(), but for a thread */
+void *threadFunc(void *arg)
+{	
+/*
+	char *str;
+	int i = 0;
 
-   	for (ap = valueString; (*ap = strsep(&_input, " \t")) != NULL;)
-           if (**ap != '\0')
-                   if (++ap >= &valueString[10])
-                           break; 
-                                   
-	return 	valueString;
+	str=(char*)arg;
+
+	while(i < 10 )
+	{
+		usleep(1);
+		printf("threadFunc says: %s\n",str);
+		++i;
+	}
+*/
+
+//Assuming C4:4F:B7:B1:41:D7 is in range and connectable
 	
+	//Acquire lock
+	pthread_mutex_lock(&lock);	
+	printf("Acquired lock!\n");
 	
-	char sub[1000];
-   	int position = 36, length = 23, c = 0;
+	char *str;
+	str=(char*)arg; //take threadID here instead
+		
+	const char *cmd = "sudo gatttool -b C4:4F:B7:B1:41:D7 --char-write-req --handle=0x000f --value=0100 --listen";
+
+	//printf("Cmd: %s\n", cmd);
+				
+	FILE *ble_listen 
+		= popen(cmd, "r"); 
+		
+	printf("Connected\n");	
+	       
+	char buf[1024];              
+
+	//read each line of incoming text
+	while (fgets(buf, sizeof(buf), ble_listen) != 0) {
+		printf("%s\n", buf);
+	   	//printf("Value = %s", getValue(buf));
+	    
+		//want substring of: Notification handle = 0x000e value: 2a 20 00 20 10 3f 00 20
+		//TODO: There must be a nicer way of doing this!
+		
+		/*
+		char *sub;
+		int position = 37, length = 23, c = 0;
 	 
-	while (c < length) {
-      		sub[c] = _input[position+c-1];
-      		c++;
-   	}
-   	sub[c] = '\0';
- 	
- 	return sub;
-}*/
+		while (c < length) {
+      			sub[c] = buf[position+c-1];
+      			c++;
+   		}
+   		sub[c] = '\0';
+	    
+	    
+	    	printf("%s\n", sub);
+	    	*/
+	    	
+		//log it in transaction log			
+		//comms_log_add("IN", whitelist[i], sub, 1);
+
+		//send it on			
+	}
+	
+	pclose(ble_listen);
+	
+	printf("Disconnected\n");
+	
+	//release lock
+	pthread_mutex_unlock(&lock);
+	
+	return NULL;
+}
 
 int main(int argc, char *argv[])
 {
@@ -53,28 +106,98 @@ int main(int argc, char *argv[])
 	//Foreach device in whitelist, do:
 	int whitelistSize = getWhitelistSize();	
 	char *whitelist[whitelistSize];	
-	getListWhitelistMAC(whitelistSize, whitelist);
 	int i = 0;
-	
-	for(i =0; i < whitelistSize; i++){
-			
-		//process IDs
-	   	pid_t pid;
-	    	pid_t wpid;
+	int status;   	   
+   	int pid[whitelistSize]; //pid_t pid;
+   	pid_t wpid;
+   	pthread_t tID[whitelistSize];
+   	
+   	
+   	getListWhitelistMAC(whitelistSize, whitelist);	
+	printf("Whitelist size: %d\n", whitelistSize);
 
+	
+   	int err;
+
+   	if (pthread_mutex_init(&lock, NULL) != 0)
+    	{
+     		printf("\n mutex init failed\n");
+		return 1;
+    	}
+   	
+   	//attempt at threads, rather than ipc
+   	
+   	//pthread_t pth;	// this is our thread identifier
+
+	for (i=0; i < whitelistSize; i++) {
+//	while (i < whitelistSize){
+		printf("Creating thread %d\n", i);
+		/* Create worker thread */
+		err = pthread_create(&(tID[i]),NULL,threadFunc, "hello");
+	}
+	
+	/* wait for our thread to finish before continuing */
+	pthread_join((tID[0]), NULL);
+	
+	pthread_mutex_destroy(&lock);
+   	
+   	/*
+   	//from http://stackoverflow.com/questions/2256357/fork-in-a-for-loop
+   	
+   	//do forking
+   	for(i=0; i < whitelistSize; i++) {
+    		//printf("i=%d\n",i); // Output of all the is		
+	    	if((pid[i]=fork())==-1) { 
+	    		exit(1);
+    		}
+	    	else if(pid[i] > 0) {	    		
+	    		break;
+    		}
+    	}
+   	
+   	for (j = 0; j < whitelistSize; j++) {
+   		
+   		
+   		printf("j= %d, MAC[j]= %s\n", j, whitelist[j]);
+   		
+   		//construct command
+   		//char *mac = whitelist[j];
+   		char *cmd = "Connect and listen";//"sudo gatttool -b ";
+		//strcat(cmd, mac);
+		//strcat(cmd, "--char-write-req --handle=0x000f --value=0100 --listen");
+		
+		printf("Cmd: %s\n", cmd);
+   	}
+   	*/
+   	/*
+	for(i =0; i < whitelistSize; i++){
+
+		pid_t pid;
+	    	
 	    	//fork the process
 	    	pid = fork();
-		if (pid == -1) {
-			printf("Failed to fork()\n"); 
-			//TODO: return valid error here, rather than exiting
-			exit(13);
-	    	}
-	    
-	    	//Fork was successful
-	    	if (pid == 0) { //CHILD PROCESS        
-		
+	    	printf("Fork");
+	    	if(pid == 0) {
+	    		printf("successfully forked");
+	    		break;
+	    	}	
+	    	else {
+	    		printf("unsuccessfully forked");
+	    	}    	
+    	}
+	
+	//if (pid == -1) {
+	//	printf("Failed to fork()\n"); 
+	//	//TODO: return valid error here, rather than exiting
+	//	exit(13);
+    	//}
+    
+    	//Fork was successful
+    	switch(pid) {      
+		case 0: //successful
+			printf("i= %d, MAC= %s\n", i, whitelist[i]);
 			//Assuming C4:4F:B7:B1:41:D7 is in range and connectable
-			
+		
 			char *cmd;
 			strcpy(cmd, "sudo gatttool -b ");
 			strcat(cmd, whitelist[i]);
@@ -84,7 +207,7 @@ int main(int argc, char *argv[])
 			FILE *ble_listen 
 				= popen(cmd, "r");        
 			char buf[1024];              
-		
+	
 			//read each line of incoming text
 			while (fgets(buf, sizeof(buf), ble_listen) != 0) {
 				//printf("%s", buf);
@@ -106,21 +229,16 @@ int main(int argc, char *argv[])
 				//log it in transaction log		
 //TODO: error here!
 				comms_log_add("IN", whitelist[i], sub, 1);
-			
+		
 				//send it on			
 			}
 			       
 			pclose(ble_listen);
-		}
-		else
-	    	{   //PARENT PROCESS
-			int status;
-		
-			//Wait for the child to exit
-			wpid = wait(&status);
-		
-	    	}
-    	}
+	
+		case -1 : //failure
+	    		//PARENT PROCESS							
+			wpid = wait(&status);	//Wait for the child to exit	
+	}  */  	
     
     	return 0;
 }
