@@ -1,16 +1,18 @@
+//Is this possible? http://www.spinics.net/lists/linux-bluetooth/msg49290.html suggests not!
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <glib.h>
 
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
 
-#include <glib.h>
-
-#include "lib/bluetooth.h"
-#include "lib/sdp.h"
-#include "lib/uuid.h"
+#include <bluetooth/bluetooth.h>
+#include "bluetooth/sdp.h"			
+#include "bluetooth/uuid.h"			
 
 #include "src/adapter.h"
 #include "src/device.h"
@@ -26,7 +28,7 @@
 #include "src/log.h"
 
 #define BROADCASTER_SVC_UUID	0x2A67
-#define BROADCASTER_UUID		0x1817
+#define BROADCASTER_UUID	0x1817
 
 enum {
 	UPDATE_RESULT_SUCCESSFUL = 0,
