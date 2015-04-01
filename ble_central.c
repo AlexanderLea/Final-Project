@@ -24,20 +24,7 @@ pthread_mutex_t lock;
 
 /* This is our thread function.  It is like main(), but for a thread */
 void *threadFunc(void *arg)
-{	
-/*
-	char *str;
-	int i = 0;
-
-	str=(char*)arg;
-
-	while(i < 10 )
-	{
-		usleep(1);
-		printf("threadFunc says: %s\n",str);
-		++i;
-	}
-*/
+{ //TODO: This blocks forever
 
 //Assuming C4:4F:B7:B1:41:D7 is in range and connectable
 	
@@ -62,10 +49,10 @@ void *threadFunc(void *arg)
 	//read each line of incoming text
 	while (fgets(buf, sizeof(buf), ble_listen) != 0) {
 		printf("%s\n", buf);
-	   	//printf("Value = %s", getValue(buf));
 	    
 		//want substring of: Notification handle = 0x000e value: 2a 20 00 20 10 3f 00 20
-		//TODO: There must be a nicer way of doing this!
+		//TODO: this causes segmentation fault. 
+		//TODO: there must be a nicer way of doing this than substring?
 		
 		/*
 		char *sub;
@@ -124,15 +111,11 @@ int main(int argc, char *argv[])
 		return 1;
     	}
    	
-   	//attempt at threads, rather than ipc
-   	
-   	//pthread_t pth;	// this is our thread identifier
-
 	for (i=0; i < whitelistSize; i++) {
 //	while (i < whitelistSize){
 		printf("Creating thread %d\n", i);
 		/* Create worker thread */
-		err = pthread_create(&(tID[i]),NULL,threadFunc, "hello");
+		err = pthread_create(&(tID[i]),NULL,threadFunc, "hello world");
 	}
 	
 	/* wait for our thread to finish before continuing */
