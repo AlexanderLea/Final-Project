@@ -9,7 +9,8 @@ ble_central: ble_central.c
 	$(CC) -o ble_central ble_central.c ble_database.c -lsqlite3
 
 gatt_service: gatt_service.c
-	$(CC) gatt_service.c -Wall -o gatt_service -lbluetooth `pkg-config --cflags --libs glib-2.0` -I/home/alexander/Documents/bluez-5.29
+	$(CC) -o gatt_service gatt_service.c -lbluetooth -L/usr/lib/bluetooth/plugins -Wl,-rpath=/usr/lib/bluetooth/plugins `pkg-config --cflags --libs glib-2.0` -Wall
+	#-I/usr/lib/bluetooth #perhaps should be /plugins too?
 
 ble_database: ble_database.c
 	$(CC) -c ble_database.c -Wall -o ble_database -lsqlite3
