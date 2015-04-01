@@ -76,7 +76,8 @@ void *threadFunc(void *arg)
 	
 	pclose(ble_listen);
 	
-	printf("Disconnected\n");
+	printf("Disconnected\n"); 
+	//TODO: need to deal with disconnections here, otherwise we wait forever
 	
 	//release lock
 	pthread_mutex_unlock(&lock);
@@ -89,8 +90,7 @@ int main(int argc, char *argv[])
 	//setup GATT server
 
 
-	//Scan for devices (should this be done in another thread?)
-	//Foreach device in whitelist, do:
+	//Foreach device in whitelist, create connection and listen
 	int whitelistSize = getWhitelistSize();	
 	char *whitelist[whitelistSize];	
 	int i = 0;
@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
    	int pid[whitelistSize]; //pid_t pid;
    	pid_t wpid;
    	pthread_t tID[whitelistSize];
-   	
    	
    	getListWhitelistMAC(whitelistSize, whitelist);	
 	printf("Whitelist size: %d\n", whitelistSize);
@@ -111,15 +110,16 @@ int main(int argc, char *argv[])
 		return 1;
     	}
    	
+   	//TODO: This won't work for more than one device from the whitelist - 
+   	//the first one gets lock and blocks forever
 	for (i=0; i < whitelistSize; i++) {
-//	while (i < whitelistSize){
 		printf("Creating thread %d\n", i);
 		/* Create worker thread */
 		err = pthread_create(&(tID[i]),NULL,threadFunc, "hello world");
 	}
 	
 	/* wait for our thread to finish before continuing */
-	pthread_join((tID[0]), NULL);
+	pthread_join((tID[0]), NULL); //would be nice to do this dynamically!
 	
 	pthread_mutex_destroy(&lock);   	 	
     
