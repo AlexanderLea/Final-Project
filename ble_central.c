@@ -115,7 +115,6 @@ int main(int argc, char *argv[])
    	
    	getListWhitelistMAC(whitelistSize, whitelist);	
 	printf("Whitelist size: %d\n", whitelistSize);
-
 	
    	int err;
 
@@ -139,106 +138,7 @@ int main(int argc, char *argv[])
 	/* wait for our thread to finish before continuing */
 	pthread_join((tID[0]), NULL);
 	
-	pthread_mutex_destroy(&lock);
-   	
-   	/*
-   	//from http://stackoverflow.com/questions/2256357/fork-in-a-for-loop
-   	
-   	//do forking
-   	for(i=0; i < whitelistSize; i++) {
-    		//printf("i=%d\n",i); // Output of all the is		
-	    	if((pid[i]=fork())==-1) { 
-	    		exit(1);
-    		}
-	    	else if(pid[i] > 0) {	    		
-	    		break;
-    		}
-    	}
-   	
-   	for (j = 0; j < whitelistSize; j++) {
-   		
-   		
-   		printf("j= %d, MAC[j]= %s\n", j, whitelist[j]);
-   		
-   		//construct command
-   		//char *mac = whitelist[j];
-   		char *cmd = "Connect and listen";//"sudo gatttool -b ";
-		//strcat(cmd, mac);
-		//strcat(cmd, "--char-write-req --handle=0x000f --value=0100 --listen");
-		
-		printf("Cmd: %s\n", cmd);
-   	}
-   	*/
-   	/*
-	for(i =0; i < whitelistSize; i++){
-
-		pid_t pid;
-	    	
-	    	//fork the process
-	    	pid = fork();
-	    	printf("Fork");
-	    	if(pid == 0) {
-	    		printf("successfully forked");
-	    		break;
-	    	}	
-	    	else {
-	    		printf("unsuccessfully forked");
-	    	}    	
-    	}
-	
-	//if (pid == -1) {
-	//	printf("Failed to fork()\n"); 
-	//	//TODO: return valid error here, rather than exiting
-	//	exit(13);
-    	//}
-    
-    	//Fork was successful
-    	switch(pid) {      
-		case 0: //successful
-			printf("i= %d, MAC= %s\n", i, whitelist[i]);
-			//Assuming C4:4F:B7:B1:41:D7 is in range and connectable
-		
-			char *cmd;
-			strcpy(cmd, "sudo gatttool -b ");
-			strcat(cmd, whitelist[i]);
-			strcat(cmd, "--char-write-req --handle=0x000f --value=0100 --listen");
-
-//TODO: Don't think this works!			
-			FILE *ble_listen 
-				= popen(cmd, "r");        
-			char buf[1024];              
-	
-			//read each line of incoming text
-			while (fgets(buf, sizeof(buf), ble_listen) != 0) {
-				//printf("%s", buf);
-			   	//printf("Value = %s", getValue(buf));
-			    
-				//want substring of: Notification handle = 0x000e value: 2a 20 00 20 10 3f 00 20
-				//TODO: There must be a nicer way of doing this!
-				char *sub;
-				int position = 37, length = 23, c = 0;
-			 
-				while (c < length) {
-		      			sub[c] = buf[position+c-1];
-		      			c++;
-		   		}
-		   		sub[c] = '\0';
-			    
-			    	//printf("%s\n", sub);
-			    	
-				//log it in transaction log		
-//TODO: error here!
-				comms_log_add("IN", whitelist[i], sub, 1);
-		
-				//send it on			
-			}
-			       
-			pclose(ble_listen);
-	
-		case -1 : //failure
-	    		//PARENT PROCESS							
-			wpid = wait(&status);	//Wait for the child to exit	
-	}  */  	
+	pthread_mutex_destroy(&lock);   	 	
     
     	return 0;
 }
