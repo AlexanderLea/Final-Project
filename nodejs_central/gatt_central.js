@@ -11,8 +11,8 @@
 
 var noble = require('noble');
 
-var carServiceUuid		= '00002a6700001000800000805f9b34fb';
-var carCharacteristicUuid 	= '0000181700001000800000805f9b34fb';
+var carServiceUuid		= '2a67';
+var carCharacteristicUuid 	= '1817';
 var errorServiceUuid = '';
 
 noble.on('stateChange', function(state) {
@@ -46,6 +46,10 @@ noble.on('discover', function(peripheral) {
 	///
 	peripheral.connect(function(err) {
 		console.log('connected');
+		
+		
+		
+	
 		//
 		// Once the peripheral has been connected, then discover the
 		// services and characteristics of interest.
@@ -77,8 +81,19 @@ noble.on('discover', function(peripheral) {
 						// Check to see if we found all of our characteristics.
 						//
 						if (carCharacteristic) { //TODO: Perhaps car and error should be characteristics in the same service}
-							//Do something!
-							blah();
+							//listen
+							
+							
+							//Reading characteristics works olay!
+							carCharacteristic.read(function(error, data){
+								if(!err) {
+									console.log('Data recieved: ', data);
+								} else {
+									console.log('err reading: ', err);
+								}
+							});
+							
+							
 						}
 						else {
 							console.log('missing characteristics');
