@@ -1,7 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
 
-
 //TODO: deal with disconnections bleno.disconnect(); to stop timer and deal with associated memory leaks
 var cmd;
 
