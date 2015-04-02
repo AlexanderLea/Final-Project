@@ -1,14 +1,12 @@
 var util = require('util');
 var bleno = require('bleno');
 
-var modCarService = require('/.car_service');
+var CarService = require('./car_service');
 
 var name = 'BLE_Central';
 
-var carService;
-
 //initialise carService
-
+var carService = new CarService();
 
 //
 // Wait until the BLE radio powers on before attempting to advertise.
