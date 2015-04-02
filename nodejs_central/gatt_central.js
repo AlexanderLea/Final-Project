@@ -1,3 +1,8 @@
+/**
+* Using https://github.com/sandeepmistry/noble, which using Bluez
+* Based fairly heavily on the demos on the wiki
+*/
+
 var noble = require('noble');
 
 /** UUID declaration */
