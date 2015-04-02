@@ -39,17 +39,14 @@ noble.on('discover', function(peripheral) {
 	// which could be formatted as an iBeacon.
 	//
 
-	console.log('found peripheral:', peripheral.advertisement);
+	console.log('found peripheral:', peripheral.advertisement.localName);
 	//
 	// Once the peripheral has been discovered, then connect to it.
 	// It can also be constructed if the uuid is already known.
 	///
 	peripheral.connect(function(err) {
-		console.log('connected');
+		console.log('conntected to: ', peripheral.advertisement.localName);
 		
-		
-		
-	
 		//
 		// Once the peripheral has been connected, then discover the
 		// services and characteristics of interest.
@@ -59,7 +56,7 @@ noble.on('discover', function(peripheral) {
 				//
 				// This must be the service we were looking for.
 				//
-				console.log('found service:', service.uuid);
+				console.log('found car comms service:', service.uuid);
 
 				//
 				// So, discover its characteristics.
@@ -71,32 +68,27 @@ noble.on('discover', function(peripheral) {
 						// Loop through each characteristic and match them to the
 						// UUIDs that we know about.
 						//
-						console.log('found characteristic:', characteristic.uuid);
+						console.log('found car comms characteristic:', characteristic.uuid);
 
 						if (carCharacteristicUuid == characteristic.uuid) {
 							carCharacteristic = characteristic;
-						}
-
-						//
-						// Check to see if we found all of our characteristics.
-						//
-						if (carCharacteristic) { //TODO: Perhaps car and error should be characteristics in the same service}
+						
+						//TODO: Perhaps car and error should be characteristics in the same service???
+						
 							//listen
-							
-							
-							//Reading characteristics works olay!
-							carCharacteristic.read(function(error, data){
-								if(!err) {
-									console.log('Data recieved: ', data);
-								} else {
-									console.log('err reading: ', err);
-								}
+							carCharacteristic.on('read', function(data, isNotification) {
+	     						//Buffer buf = data;
+	     						console.log('data', data);
 							});
-							
-							
+
+							// true to enable notify
+							carCharacteristic.notify(true, function(error) {
+								console.log('listening...');
+							});
+	
 						}
 						else {
-							console.log('missing characteristics');
+							console.log('cannot find car comms characteristic');
 						}
 					});
 				});
