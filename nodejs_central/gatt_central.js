@@ -4,7 +4,11 @@
 */
 
 var noble = require('noble');
+var observer = require('./gatt_central_observer.js');
 
+
+
+//Here downwards is now in gatt_central_observer.js
 /** UUID declaration */
 var carServiceUuid		= '2a67';
 var carCharacteristicUuid 	= '1817';
