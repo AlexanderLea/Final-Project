@@ -12,7 +12,7 @@ function CarService() {
     });
 }
 
-function sendCommand(_cmd){
+CarService.prototype.sendCommand = function(_cmd){
 	CarCharacteristic.updateCharacteristicValue(_cmd);
 }
 
