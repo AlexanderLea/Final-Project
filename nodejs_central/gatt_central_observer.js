@@ -13,7 +13,7 @@ var errorServiceUuid = '';
 /** Variable to hold carCharacteristic */
 var carCharacteristic = null;
 
-function gattObserver() {
+function GattObserver() {
 	//construct object
 	
 	//start scanning
@@ -28,7 +28,7 @@ function gattObserver() {
 	});
 }
 
-function run(){
+GattObserver.prototype.run = function(readValueCallback){
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
@@ -63,8 +63,9 @@ function run(){
 								//read characteristic value
 								carCharacteristic.on('read', function(data, isNotification) {
 			 						//Buffer buf = data;
-			 						console.log('data', data);
+			 						console.log('observer data', data);
 			 						
+			 						readValueCallback(null, data);
 			 						
 	//	     						initiate callback
 								});
@@ -85,4 +86,4 @@ function run(){
 	});
 }
 
-module.exports = gattObserver;
+module.exports = GattObserver;
