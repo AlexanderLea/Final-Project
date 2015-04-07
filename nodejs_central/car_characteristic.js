@@ -9,14 +9,14 @@ var CarCharacteristic = function() {
 		uuid: '1817',
 		properties: ['read', 'notify'],
 		//Read event
-		onReadRequest : function(offset, callback) {
+		onReadRequest: function(offset, callback) {
      		if(cmd){
 		 		console.log('read');
 		  		callback(this.RESULT_SUCCESS, new Buffer(cmd));
       		}
 		},
 		//Subscribe event
-		onSubscribe : function(maxSize, updateValueCallback){
+		onSubscribe: function(maxSize, updateValueCallback){
 			console.log('subscribe');	
 			
 			//if subscribed to, poll cmd every half second, and send update if has changed.
