@@ -3,7 +3,8 @@
 * Based fairly heavily on the demos on the wiki
 */
 
-var noble = require('noble');
+var noble = require('noble'),
+	events = require('events');
 
 /** UUID declaration */
 var carServiceUuid		= '2a67';
@@ -15,6 +16,7 @@ var carCharacteristic = null;
 
 function GattObserver() {
 	//construct object
+	events.EventEmitter.call(this);
 	
 	//start scanning
 	noble.on('stateChange', function(state) {
@@ -24,11 +26,14 @@ function GattObserver() {
 		}
 		else { //don't scan
 			noble.stopScanning();
+			console.log('Adapter isn\'t on - error!');
 		}
 	});
 }
 
-GattObserver.prototype.run = function(readValueCallback){
+GattObserver.prototype.run = function(){
+	var self = this;
+	
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
@@ -37,8 +42,8 @@ GattObserver.prototype.run = function(readValueCallback){
 	
 		//Connect to everything!! TODO: only connect to whitelist devices
 		peripheral.connect(function(err) {
-			console.log('conntected to: ', peripheral.advertisement.localName);
-		
+			console.log('connected to: ', peripheral.advertisement.localName);
+			
 			//We are now connected, so discover if it exposes carServiceUuid
 			peripheral.discoverServices([carServiceUuid], function(err, services) {
 				services.forEach(function(service) {
@@ -47,7 +52,7 @@ GattObserver.prototype.run = function(readValueCallback){
 					console.log('found car comms service:', service.uuid);
 
 					// So, discover its characteristics.
-					service.discoverCharacteristics([], function(err, characteristics) {
+					service.discoverCharacteristics([carCharacteristicUuid], function(err, characteristics) {
 						characteristics.forEach(function(characteristic) {
 						
 							//found a characteristic
@@ -64,8 +69,8 @@ GattObserver.prototype.run = function(readValueCallback){
 								carCharacteristic.on('read', function(data, isNotification) {
 			 						//Buffer buf = data;
 			 						console.log('observer data', data);
-			 						
-			 						readValueCallback(null, data);
+			 						self.emit('data-recieved', data);
+			 						//readValueCallback(null, data);
 			 						
 	//	     						initiate callback
 								});
