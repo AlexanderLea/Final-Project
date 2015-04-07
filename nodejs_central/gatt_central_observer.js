@@ -18,26 +18,16 @@ var carCharacteristic = null;
 function GattObserver() {
 	//construct object
 	events.EventEmitter.call(this);
-	
-	//start scanning
-	//noble.on('stateChange', function(state) {
-	//	if (state === 'poweredOn') { //If bluetooth, scan
-			
-	//	}
-	//	else { //don't scan
-	//		noble.stopScanning();
-	//		console.log('Adapter isn\'t on - error!');
-	//	}
-	//});
 }
 sys.inherits(GattObserver, events.EventEmitter);
 
 
-GattObserver.prototype.run = function(){
+GattObserver.prototype.run = function(callback){
 	var self = this;
-	console.log('scanning...');
+
 	noble.startScanning();
-			
+	console.log('scanning');
+	
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
@@ -73,15 +63,14 @@ GattObserver.prototype.run = function(){
 								carCharacteristic.on('read', function(data, isNotification) { 					
 			 						//console.log('observer data', data);
 			 						self.emit('data-recieved', data);
-			 						//readValueCallback(null, data);
-			 						
-	//	     						initiate callback
 								});
 
 								//enable notifications so we get updates
 								carCharacteristic.notify(true, function(error) {
 									console.log('listening...');
 								});
+								
+								callback(null);
 							}
 							else {
 								console.log('cannot find car comms characteristic');
@@ -94,7 +83,7 @@ GattObserver.prototype.run = function(){
 	});
 }
 
-GattObserver.prototype.close = function(){
+GattObserver.prototype.stop = function(){
 	console.log('TODO: need to close some stuff here.');
 }
 
