@@ -4,7 +4,8 @@
 */
 
 var noble = require('noble'),
-	events = require('events');
+	events = require('events'),
+	sys = require('sys');
 
 /** UUID declaration */
 var carServiceUuid		= '2a67';
@@ -30,6 +31,7 @@ function GattObserver() {
 		}
 	});
 }
+sys.inherits(GattObserver, events.EventEmitter);
 
 GattObserver.prototype.run = function(){
 	var self = this;

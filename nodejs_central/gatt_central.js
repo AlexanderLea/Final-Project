@@ -4,17 +4,25 @@
 */
 
 var noble = require('noble');
-var observer = require('./gatt_central_observer');
-var broadcaster = require('/gatt_central_peripheral')
+var GattObserver = require('./gatt_central_observer');
+var GattPeripheral = require('./gatt_central_peripheral')
 
-var gattObserver = new observer();
-var gattBroadcaster = new broadcaster();
+//var gattPeripheral = new GattPeripheral();
+var gattObserver = new GattObserver();
 
-gattBroadcaster.run();
+//gattPeripheral.run();
 
-gattObserver.run(function(err, data){
-	//return when command is recieved
-	
-	gattObserver.sendCommand('command');
+gattObserver.run();
+
+gattObserver.on('data-recieved', function(data){
+	console.log('server ', data);
 });
 
+/*function(err, data){		
+	//return when command is recieved
+	
+	g
+	console.log('Central: ', data);
+	//gattObserver.sendCommand('command');
+});
+*/
