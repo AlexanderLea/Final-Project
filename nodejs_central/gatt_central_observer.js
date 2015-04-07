@@ -20,22 +20,24 @@ function GattObserver() {
 	events.EventEmitter.call(this);
 	
 	//start scanning
-	noble.on('stateChange', function(state) {
-		if (state === 'poweredOn') { //If bluetooth, scan
-			console.log('scanning...');
-			noble.startScanning();
-		}
-		else { //don't scan
-			noble.stopScanning();
-			console.log('Adapter isn\'t on - error!');
-		}
-	});
+	//noble.on('stateChange', function(state) {
+	//	if (state === 'poweredOn') { //If bluetooth, scan
+			
+	//	}
+	//	else { //don't scan
+	//		noble.stopScanning();
+	//		console.log('Adapter isn\'t on - error!');
+	//	}
+	//});
 }
 sys.inherits(GattObserver, events.EventEmitter);
 
+
 GattObserver.prototype.run = function(){
 	var self = this;
-	
+	console.log('scanning...');
+	noble.startScanning();
+			
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
@@ -68,9 +70,8 @@ GattObserver.prototype.run = function(){
 								carCharacteristic = characteristic;
 						
 								//read characteristic value
-								carCharacteristic.on('read', function(data, isNotification) {
-			 						//Buffer buf = data;
-			 						console.log('observer data', data);
+								carCharacteristic.on('read', function(data, isNotification) { 					
+			 						//console.log('observer data', data);
 			 						self.emit('data-recieved', data);
 			 						//readValueCallback(null, data);
 			 						
@@ -91,6 +92,10 @@ GattObserver.prototype.run = function(){
 			});
 		});
 	});
+}
+
+GattObserver.prototype.close = function(){
+	console.log('TODO: need to close some stuff here.');
 }
 
 module.exports = GattObserver;
