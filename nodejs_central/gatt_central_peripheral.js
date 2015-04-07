@@ -13,11 +13,11 @@ var carService;
 
 //TODO: on connection and disconnection events
 
-function gattPeripheral(){
-	carService =  = new CarService();
+function GattPeripheral() {
+	carService = new CarService();
 }
 
-function run(){
+GattPeripheral.prototype.run = function() {
 	//
 	// Wait until the BLE radio powers on before attempting to advertise.
 	// If you don't have a BLE radio, then it will never power on!
@@ -53,4 +53,4 @@ function run(){
 	});
 }
 
-module.exports = gattPeripheral;
+module.exports = GattPeripheral;
