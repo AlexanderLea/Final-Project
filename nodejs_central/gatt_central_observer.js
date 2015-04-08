@@ -5,7 +5,9 @@
 
 var noble = require('noble'),
 	events = require('events'),
-	sys = require('sys');
+	sys = require('sys'),
+	async = require('async'),
+	db = require('./log_database');
 
 /** UUID declaration */
 var carServiceUuid		= '2a67';
@@ -14,6 +16,8 @@ var errorServiceUuid = '';
 
 /** Variable to hold carCharacteristic */
 var carCharacteristic = null;
+
+var dbSource = 'gatt_central_observer';
 
 function GattObserver() {
 	//construct object
@@ -27,6 +31,7 @@ GattObserver.prototype.run = function(callback){
 
 	noble.startScanning();
 	console.log('scanning');
+	db.serverLogAdd(dbSource, 'scanning for peripherals', []);
 	
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
@@ -37,6 +42,8 @@ GattObserver.prototype.run = function(callback){
 		//Connect to everything!! TODO: only connect to whitelist devices
 		peripheral.connect(function(err) {
 			console.log('connected to: ', peripheral.advertisement.localName);
+			//var x = 'connected to ' + peripheral.advertisement.localName;
+			//db.serverLogAdd(dbSource, x, []);
 			
 			//We are now connected, so discover if it exposes carServiceUuid
 			peripheral.discoverServices([carServiceUuid], function(err, services) {
@@ -68,6 +75,11 @@ GattObserver.prototype.run = function(callback){
 								//enable notifications so we get updates
 								carCharacteristic.notify(true, function(error) {
 									console.log('listening...');
+									//TODO: need fancy async stuf
+									//db.serverLogAdd(dbSource, 
+									//	'listening to '+ peripheral.advertisement.localName +' for notifications'
+									//	, []);
+									
 								});
 								
 								callback(null);
