@@ -20,7 +20,9 @@ var carCharacteristic = null;
 var dbSource = 'gatt_central_observer';
 
 var dbQueue = async.queue(function(data, callback){
-	db.serverLogAdd(dbSource, data.message);
+	//for each item in queue, call save to db method, replacing any null
+	// character values in the string
+	db.serverLogAdd(dbSource, data.message.replace('\0', ''));
 	console.log(data);
 	callback();
 }, 2);
