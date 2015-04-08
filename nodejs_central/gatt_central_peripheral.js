@@ -16,8 +16,7 @@ var carService;
 //TODO: on connection and disconnection events
 
 function GattPeripheral() {
-	carService = new CarService();
-	
+	carService = new CarService();	
 }
 
 GattPeripheral.prototype.run = function(callback){
@@ -25,9 +24,9 @@ GattPeripheral.prototype.run = function(callback){
 	bleno.startAdvertising(name, [carService.uuid]);
 
 	bleno.on('advertisingStart', function(err) {
-//  		if (!err) {
-			//console.log('advertising...');
+  		if (!err) {
 			slog.push({source: dbSource, message: name + ': advertising'});
+			
 			//Add services
 			bleno.setServices([
 		  		carService
@@ -35,10 +34,10 @@ GattPeripheral.prototype.run = function(callback){
 					
 			//return callback
 			callback(null);
-//	 	} else{
-	 		//console.log('err ', err);
-//	 		callback(err);
-//	 	}
+	 	} else{
+	 		console.log('err ', err);
+	 		callback(err);
+	 	}
 	});
 }
 
