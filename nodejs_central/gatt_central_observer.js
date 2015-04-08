@@ -54,7 +54,6 @@ GattObserver.prototype.run = function(callback){
 	
 		//Connect to everything!! TODO: only connect to whitelist devices
 		peripheral.connect(function(err) {
-			console.log('connected to: ', peripheral.advertisement.localName);
 			//log in database
 			dbQueue.push({message: peripheral.advertisement.localName + ': connected'});
 			
@@ -63,39 +62,30 @@ GattObserver.prototype.run = function(callback){
 				services.forEach(function(service) {
 				
 					//If it's found, it must have that service running
-					console.log('found car comms service:', service.uuid);
+					//log in database
+					dbQueue.push({message: peripheral.advertisement.localName + ': found service: ' + service.uuid});
 
-					// So, discover its characteristics.
+					// So, discover if it has the carChatacteristic
+					//TODO: Perhaps car and error should be characteristics in the same service rather than different services?
 					service.discoverCharacteristics([carCharacteristicUuid], function(err, characteristics) {
 						characteristics.forEach(function(characteristic) {
-						
-							//found a characteristic
-							console.log('found characteristic:', characteristic.uuid, ' in service: ', service.uuid);
+													
+							//get characteristic object
+							carCharacteristic = characteristic;
+					
+							//read characteristic value
+							carCharacteristic.on('read', function(data, isNotification) { 					
+		 						//console.log('observer data', data);
+		 						self.emit('data-recieved', data);
+							});
 
-							//is it the characteristic we're looking for?
-							//TODO: Perhaps car and error should be characteristics in the same service rather than different services?
-							if (carCharacteristicUuid == characteristic.uuid) {
-								//yes it is!
-								//get characteristic object
-								carCharacteristic = characteristic;
-						
-								//read characteristic value
-								carCharacteristic.on('read', function(data, isNotification) { 					
-			 						//console.log('observer data', data);
-			 						self.emit('data-recieved', data);
-								});
-
-								//enable notifications so we get updates
-								carCharacteristic.notify(true, function(error) {
-									//log in database
-									dbQueue.push({message: peripheral.advertisement.localName + ':listening for notifications'});									
-								});
-								
-								callback(null);
-							}
-							else {
-								console.log('cannot find car comms characteristic');
-							}
+							//enable notifications so we get updates
+							carCharacteristic.notify(true, function(error) {
+								//log in database
+								dbQueue.push({message: peripheral.advertisement.localName + ': listening for notifications'});									
+							});
+							
+							callback(null);
 						});
 					});
 				});
