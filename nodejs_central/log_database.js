@@ -12,7 +12,7 @@ module.exports = {
 
 	commsLogAdd: function(direction, from, message, logType, callback){
 		db.serialize(function() {
-			db.run("INSERT INTO communication_log (message_direction, message_from, message_contents, comms_log_type) VALUES (?,?,?,?)", direction, from, message, logType);
+			db.run("INSERT INTO communication_log (message_direction, message_from, message_contents, comms_log_type) VALUES (?,?,?,?)", direction, from, message, logType, callback);
 		});
 
 		db.close();	
