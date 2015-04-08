@@ -38,11 +38,11 @@ noble.on('stateChange', function(state) {
 		gattObserver.run(function(err){
 			if(!err){
 				observerRunning = true;
-				gattPeripheral.run(function(err){
+				/*gattPeripheral.run(function(err){
 					if(!err){
 						peripheralRunning = true;
 					}
-				});
+				});*/
 			} else {
 				console.log('err: ', err);
 			}
