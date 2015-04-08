@@ -2,12 +2,14 @@
 * Using https://github.com/sandeepmistry/bleno
 */
 
-var util = require('util');
-var bleno = require('bleno');
+var util = require('util'),
+	bleno = require('bleno'),
+	slog = require('./server_log_queue');
 
 var CarService = require('./car_service');
 
 var name = 'BLE_Central';
+var dbSource = 'gatt_central_peripheral';
 
 var carService;
 
@@ -24,8 +26,8 @@ GattPeripheral.prototype.run = function(callback){
 
 	bleno.on('advertisingStart', function(err) {
 //  		if (!err) {
-			console.log('advertising...');
-
+			//console.log('advertising...');
+			slog.push({source: dbSource, message: name + ': advertising'});
 			//Add services
 			bleno.setServices([
 		  		carService
@@ -41,7 +43,7 @@ GattPeripheral.prototype.run = function(callback){
 }
 
 GattPeripheral.prototype.stop = function(){
-	console.log("Stop peripheral");
+	slog.push({source: dbSource, message: name + ': stop advertising'});
 	bleno.stopAdvertising();
 }
 
