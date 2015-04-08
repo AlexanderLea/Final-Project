@@ -19,6 +19,17 @@ var carCharacteristic = null;
 
 var dbSource = 'gatt_central_observer';
 
+var dbQueue = async.queue(function(data, callback){
+	db.serverLogAdd(dbSource, data.message);
+	console.log(data);
+	callback();
+}, 2);
+
+//Callback for when the queue is empty
+dbQueue.drain = function(){
+	//console.log('all items have been processed');
+}
+
 function GattObserver() {
 	//construct object
 	events.EventEmitter.call(this);
@@ -30,20 +41,22 @@ GattObserver.prototype.run = function(callback){
 	var self = this;
 
 	noble.startScanning();
-	console.log('scanning');
-	db.serverLogAdd(dbSource, 'scanning for peripherals', []);
-	
+	//console.log('scanning');
+	//log in database
+	dbQueue.push({message: 'scanning for peripherals'});
+		
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
 		//We found one!
-		console.log('found peripheral:', peripheral.advertisement.localName);
+		//log in database
+		dbQueue.push({message: peripheral.advertisement.localName + ': found'});
 	
 		//Connect to everything!! TODO: only connect to whitelist devices
 		peripheral.connect(function(err) {
 			console.log('connected to: ', peripheral.advertisement.localName);
-			//var x = 'connected to ' + peripheral.advertisement.localName;
-			//db.serverLogAdd(dbSource, x, []);
+			//log in database
+			dbQueue.push({message: peripheral.advertisement.localName + ': connected'});
 			
 			//We are now connected, so discover if it exposes carServiceUuid
 			peripheral.discoverServices([carServiceUuid], function(err, services) {
@@ -74,12 +87,8 @@ GattObserver.prototype.run = function(callback){
 
 								//enable notifications so we get updates
 								carCharacteristic.notify(true, function(error) {
-									console.log('listening...');
-									//TODO: need fancy async stuf
-									//db.serverLogAdd(dbSource, 
-									//	'listening to '+ peripheral.advertisement.localName +' for notifications'
-									//	, []);
-									
+									//log in database
+									dbQueue.push({message: peripheral.advertisement.localName + ':listening for notifications'});									
 								});
 								
 								callback(null);
