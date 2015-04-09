@@ -20,7 +20,7 @@ var CarCharacteristic = function() {
 			console.log('subscribe');	
 			
 			//if subscribed to, poll cmd every half second, and send update if has changed.
-			//TODO: make this better and async
+			//TODO: make this better
 			setInterval(function() { 
 				if(cmd){
 					updateValueCallback(new Buffer([cmd]));
