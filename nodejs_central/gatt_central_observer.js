@@ -31,19 +31,19 @@ GattObserver.prototype.run = function(callback){
 	noble.startScanning();
 	//console.log('scanning');
 	//log in database
-	slogQueue.push({source: dbSource, message: 'scanning for peripherals'});
+	slogQueue.push({source: dbSource, message: 'scanning for peripherals', priority: 'info'});
 		
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
 		//We found one!
 		//log in database
-		slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': found'});
+		slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': found', priority: 'info'});
 	
 		//Connect to everything!! TODO: only connect to whitelist devices
 		peripheral.connect(function(err) {
 			//log in database
-			slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': connected'});
+			slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': connected', priority: 'info'});
 			
 			//We are now connected, so discover if it exposes carServiceUuid
 			peripheral.discoverServices([carServiceUuid], function(err, services) {
@@ -51,7 +51,7 @@ GattObserver.prototype.run = function(callback){
 				
 					//If it's found, it must have that service running
 					//log in database
-					slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': found service: ' + service.uuid});
+					slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': found service: ' + service.uuid, priority: 'info'});
 
 					// So, discover if it has the carChatacteristic
 					//TODO: Perhaps car and error should be characteristics in the same service rather than different services?
@@ -70,7 +70,7 @@ GattObserver.prototype.run = function(callback){
 							//enable notifications so we get updates
 							carCharacteristic.notify(true, function(error) {
 								//log in database
-								slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': listening for notifications'});									
+								slogQueue.push({source: dbSource, message: peripheral.advertisement.localName + ': listening for notifications', priority: 'info'});									
 							});
 							
 							callback(null);
@@ -83,6 +83,7 @@ GattObserver.prototype.run = function(callback){
 }
 
 GattObserver.prototype.stop = function(){
+	//TODO
 	console.log('TODO: need to close some stuff here.');
 }
 
