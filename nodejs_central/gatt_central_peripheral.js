@@ -4,7 +4,7 @@
 
 var util = require('util'),
 	bleno = require('bleno'),
-	slog = require('./server_log_queue');
+	slog = require('./server_log_queue').serverDbQueue;
 
 var CarService = require('./car_service');
 
@@ -51,7 +51,7 @@ GattPeripheral.prototype.run = function(){
 }
 
 GattPeripheral.prototype.stop = function(){
-	slog.push({source: dbSource, message: name + ': stop advertising'});
+	slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
 	bleno.stopAdvertising();
 }
 
