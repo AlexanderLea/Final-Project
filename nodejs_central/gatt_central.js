@@ -19,18 +19,18 @@ var peripheralRunning = false, observerRunning = false;
 noble.on('stateChange', function(state) {
 	if (state === 'poweredOn') {		
 		
-		//gattObserver.run(function(err){
-			//if(!err){
-			//	observerRunning = true;
-				gattPeripheral.run(function(err){
-					if(!err){
-						peripheralRunning = true;
-					}
-				});
-			//} else {
-			//	console.log('err: ', err);
-			//}
-		//});		
+		gattObserver.run(function(err){
+			if(!err){
+				observerRunning = true;
+				//gattPeripheral.run(function(err){
+				//	if(!err){
+				//		peripheralRunning = true;
+				//	}
+				//});
+			} else {
+				console.log('err: ', err);
+			}
+		});		
 	}
 	else { //don't scan		
 		gattPeripheral.stop();
@@ -38,7 +38,7 @@ noble.on('stateChange', function(state) {
 	}
 });
 
-gattObserver.on('data-recieved', function(data){
-	console.log('recieved ', data);
-	gattPeripheral.broadcastCommand("poo");
+gattObserver.on('data-recieved', function(data) {
+	console.log('recieved (buffer) ', data);	
+	//gattPeripheral.broadcastCommand("poo");
 });
