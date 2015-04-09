@@ -17,7 +17,6 @@ var carService;
 
 function GattPeripheral() {
 	carService = new CarService();
-	console.log('peripheral');	
 }
 
 GattPeripheral.prototype.run = function(){
@@ -26,28 +25,28 @@ GattPeripheral.prototype.run = function(){
 		if (state === 'poweredOn') {
 
 			//start advertising!
-			console.log('start advertising');
 			bleno.startAdvertising(name, [carService.uuid], function(err) {
 				if (err) {
-					console.log(err);
+					slog.push({source: dbSource, message: err, priority: 'err'});
 				}
 			});
 		}
 		else {
 			bleno.stopAdvertising();
+			slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
 		}
 	});
 
 	bleno.on('advertisingStart', function(err) {
   		if (!err) {
-			//slog.push({source: dbSource, message: name + ': advertising'});
+			slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
 				console.log('add services');
 			//Add services
 			bleno.setServices([
 		  		carService
 			]);
 	 	} else {
-	 		console.log('err ', err);
+	 		slog.push({source: dbSource, message: err, priority: 'err'});
 	 	}
 	});
 }
