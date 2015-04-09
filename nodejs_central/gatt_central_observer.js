@@ -67,10 +67,12 @@ GattObserver.prototype.run = function(callback){
 		 						//console.log('observer data', data);
 		 						self.emit('data-recieved', data);
 								//direction, from, message, logType
-		 						clog.push({direction: 'IN', 
+		 						clog.push({
+		 							direction: 'IN', 
 		 							from: 'TODO: '+ peripheral.advertisement.localName,
 		 							message: data.toString('hex'),
-		 							logType: '1'});
+		 							logType: '1'
+	 							});
 							});
 
 							//enable notifications so we get updates

@@ -41,7 +41,7 @@ util.inherits(CarCharacteristic, bleno.Characteristic);
 
 CarCharacteristic.prototype.updateCharacteristicValue = function(_newCmd){
 	cmd = _newCmd;
-	console.log(cmd);
+	
 }
 
 module.exports = CarCharacteristic;

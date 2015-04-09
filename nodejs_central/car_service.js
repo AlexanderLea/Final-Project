@@ -22,5 +22,4 @@ CarService.prototype.sendCommand = function(cmd){
 	carCharacteristic.updateCharacteristicValue(cmd);
 }
 
-
 module.exports = CarService;

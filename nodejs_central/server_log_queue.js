@@ -20,7 +20,7 @@ var commsDbQueue = async.queue(function(record, callback){
 	db.commsLogAdd(record.direction, record.from, record.message.replace('\0', ''), record.priority);
 	console.log(record);
 	callback();
-}, 2);
+}, 1);
 
 //Callback for when the queue is empty
 commsDbQueue.drain = function(){
