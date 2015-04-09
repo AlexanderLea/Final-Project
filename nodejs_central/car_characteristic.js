@@ -1,5 +1,6 @@
-var util = require('util');
-var bleno = require('bleno');
+var util = require('util'),
+	bleno = require('bleno'),
+	slog = require('./server_log_queue');
 
 //TODO: deal with disconnections bleno.disconnect(); to stop timer and deal with associated memory leaks
 var cmd;
@@ -11,13 +12,13 @@ var CarCharacteristic = function() {
 		//Read event
 		onReadRequest: function(offset, callback) {
      		if(cmd){
-		 		console.log('read');
+			//slog.push({source: dbSource, message: 'characteristic read', priority: 'debug'});
 		  		callback(this.RESULT_SUCCESS, new Buffer(cmd));
       		}
 		},
 		//Subscribe event
 		onSubscribe: function(maxSize, updateValueCallback){
-			console.log('subscribe');	
+			//slog.push({source: dbSource, message: 'characteristic subscribe', priority: 'debug'});	
 			
 			//if subscribed to, poll cmd every half second, and send update if has changed.
 			//TODO: make this better
@@ -27,18 +28,11 @@ var CarCharacteristic = function() {
 					cmd = null;
 				}
 			}, 500);						
-		},
+		}/*,
 		//Notify event - fires every time a notification is sent
 		onNotify: function(){
-			//CarCharacteristic.
-			console.log('notify');
-		}/*,
-		descriptors: [
-			new bleno.Descriptor({
-				uuid: '2902',
-				value: 'Gets the car communication message'
-			})
-		]*/
+			//slog.push({source: dbSource, message: 'characteristic notify', priority: 'debug'});
+		}*/
 	});
 }
 
