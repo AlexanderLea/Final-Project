@@ -17,36 +17,20 @@ var peripheralRunning = false, observerRunning = false;
 
 //if Bluetooth is on, let's go
 noble.on('stateChange', function(state) {
-	if (state === 'poweredOn') {
-		/*
-		async.parallel([
-			function(callback){
-				//console.log('peripheral');
-				gattPeripheral.run();
-				callback(null, 'advertising');
-			},
-			function(callback){
-				//console.log('observer');			
-				gattObserver.run();
-				callback(null, 'observing');
-			}
-		],
-		function(err, data){
-		 	console.log(data);
-		});*/
+	if (state === 'poweredOn') {		
 		
-		gattObserver.run(function(err){
-			if(!err){
-				observerRunning = true;
-				/*gattPeripheral.run(function(err){
+		//gattObserver.run(function(err){
+			//if(!err){
+			//	observerRunning = true;
+				gattPeripheral.run(function(err){
 					if(!err){
 						peripheralRunning = true;
 					}
-				});*/
-			} else {
-				console.log('err: ', err);
-			}
-		});		
+				});
+			//} else {
+			//	console.log('err: ', err);
+			//}
+		//});		
 	}
 	else { //don't scan		
 		gattPeripheral.stop();
