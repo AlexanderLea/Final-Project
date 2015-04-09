@@ -4,9 +4,13 @@ var sqlite3 = require('sqlite3').verbose(),
 var db = new sqlite3.Database('../log.db');
 
 module.exports = {
-	serverLogAdd: function(source, message){
+	/**
+	* Logs server activity in the database
+	* priority: info, err, warn, debug
+	*/
+	serverLogAdd: function(source, message, priority){
 		db.serialize(function() {
-			db.run("INSERT INTO server_log (log_source, log_message) VALUES (?,?)", source, message);
+			db.run("INSERT INTO server_log (log_source, log_message, priority) VALUES (?,?,?)", source, message, priority);
 		});
 	},
 
