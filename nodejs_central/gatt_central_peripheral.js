@@ -4,7 +4,8 @@
 
 var util = require('util'),
 	bleno = require('bleno'),
-	slog = require('./server_log_queue').serverDbQueue;
+	slog = require('./server_log_queue').serverDbQueue,
+	clog = require('./server_log_queue').commsDbQueue;
 
 var CarService = require('./car_service');
 
@@ -57,6 +58,12 @@ GattPeripheral.prototype.stop = function(){
 
 GattPeripheral.prototype.broadcastCommand = function(_cmd){
 	carService.sendCommand(_cmd);
+	clog.push({
+		direction: 'OUT', 
+		from: '',
+		message: _cmd,
+		logType: '1'
+	});
 }
 
 module.exports = GattPeripheral;
