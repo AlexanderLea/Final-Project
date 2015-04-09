@@ -38,13 +38,12 @@ GattPeripheral.prototype.run = function(){
 	});
 
 	bleno.on('advertisingStart', function(err) {
-  		if (!err) {
-			slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
-				console.log('add services');
+  		if (!err) {			
 			//Add services
 			bleno.setServices([
 		  		carService
 			]);
+			slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
 	 	} else {
 	 		slog.push({source: dbSource, message: err, priority: 'err'});
 	 	}
