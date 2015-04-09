@@ -24,7 +24,8 @@ var CarCharacteristic = function() {
 			//TODO: make this better
 			setInterval(function() { 
 				if(cmd){
-					updateValueCallback(new Buffer([cmd]));
+					//updateValueCallback(new Buffer([cmd]));
+					console.log('titty bum: ' + cmd);
 					cmd = null;
 				}
 			}, 500);						
@@ -38,8 +39,9 @@ var CarCharacteristic = function() {
 
 util.inherits(CarCharacteristic, bleno.Characteristic);
 
-function updateCharacteristicValue(_newCmd){
+CarCharacteristic.prototype.updateCharacteristicValue = function(_newCmd){
 	cmd = _newCmd;
+	console.log(cmd);
 }
 
 module.exports = CarCharacteristic;

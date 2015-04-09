@@ -1,21 +1,26 @@
-var util = require('util');
-var bleno = require('bleno');
+var util = require('util'),
+	bleno = require('bleno'),
+	CarCharacteristic = require('./car_characteristic');
 var BlenoPrimaryService = bleno.PrimaryService;
-var CarCharacteristic = require('./car_characteristic');
+
+var carCharacteristic = new CarCharacteristic();
 
 function CarService() {
     CarService.super_.call(this, {
         uuid: '2a67',
         characteristics: [
-            new CarCharacteristic()
+            carCharacteristic
         ]
-    });
-}
-
-CarService.prototype.sendCommand = function(_cmd){
-	CarCharacteristic.updateCharacteristicValue(_cmd);
+    });   
 }
 
 util.inherits(CarService, BlenoPrimaryService);
+
+/**  */
+CarService.prototype.sendCommand = function(cmd){
+	//console.log('bum titty');
+	carCharacteristic.updateCharacteristicValue(cmd);
+}
+
 
 module.exports = CarService;
