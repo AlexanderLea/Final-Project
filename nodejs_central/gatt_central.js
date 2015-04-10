@@ -60,5 +60,5 @@ noble.on('stateChange', function(state) {
 
 gattObserver.on('data-recieved', function(data) {
 	//console.log('recieved (buffer) ', data);	
-	gattPeripheral.broadcastCommand(data.toString('hex'));
+	gattPeripheral.broadcastCommand(data);
 });

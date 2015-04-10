@@ -24,8 +24,8 @@ var CarCharacteristic = function() {
 			//TODO: make this better
 			setInterval(function() { 
 				if(cmd){
-					//updateValueCallback(new Buffer([cmd]));
-					console.log('titty bum: ' + cmd);
+					console.log(cmd);
+					updateValueCallback(cmd);					
 					cmd = null;
 				}
 			}, 500);						

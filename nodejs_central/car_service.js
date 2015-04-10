@@ -18,7 +18,6 @@ util.inherits(CarService, BlenoPrimaryService);
 
 /**  */
 CarService.prototype.sendCommand = function(cmd){
-	//console.log('bum titty');
 	carCharacteristic.updateCharacteristicValue(cmd);
 }
 

@@ -39,12 +39,12 @@ GattObserver.prototype.run = function(callback){
 	/** Listen to onDiscover to hopefully discover some devices. */
 	noble.on('discover', function(peripheral) {
 	
-		//We found one!
-		//log in database
-		slog.push({source: dbSource, message: peripheral.advertisement.localName + ': found', priority: 'info'});
-		
-		//Connect to everything!! TODO: only connect to whitelist devices
 		if(peripheral.advertisement.localName != 'BLE_Central'){
+			//We found one!
+			//log in database
+			slog.push({source: dbSource, message: peripheral.advertisement.localName + ': found', priority: 'info'});
+		
+			//Connect to everything!! TODO: only connect to whitelist devices		
 			peripheral.connect(function(err) {
 				//log in database
 				slog.push({source: dbSource, message: peripheral.advertisement.localName + ': connected', priority: 'info'});

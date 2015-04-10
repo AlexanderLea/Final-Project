@@ -64,7 +64,7 @@ GattPeripheral.prototype.broadcastCommand = function(_cmd){
 	clog.push({
 		direction: 'OUT', 
 		from: '',
-		message: _cmd,
+		message: _cmd.toString('hex'),
 		logType: '1'
 	});
 }
