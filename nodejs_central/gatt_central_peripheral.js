@@ -2,6 +2,8 @@
 * Using https://github.com/sandeepmistry/bleno
 */
 
+console.log('peripheral using device: ', process.env.BLENO_HCI_DEVICE_ID);
+
 var util = require('util'),
 	bleno = require('bleno'),
 	slog = require('./server_log_queue').serverDbQueue,
@@ -17,6 +19,7 @@ var carService;
 //TODO: on connection and disconnection events
 
 function GattPeripheral() {
+
 	carService = new CarService();
 }
 

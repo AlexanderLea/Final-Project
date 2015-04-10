@@ -1,7 +1,9 @@
 /**
 * Using https://github.com/sandeepmistry/noble, which using Bluez
 * Based fairly heavily on the demos on the wiki
-*/
+*/	
+
+console.log('observer using device: ', process.env.NOBLE_HCI_DEVICE_ID);
 
 var noble = require('noble'),
 	events = require('events'),
@@ -19,7 +21,7 @@ var carCharacteristic = null;
 
 var dbSource = 'gatt_central_observer';
 
-function GattObserver() {
+function GattObserver() {	
 	//construct object
 	events.EventEmitter.call(this);
 }
@@ -40,53 +42,55 @@ GattObserver.prototype.run = function(callback){
 		//We found one!
 		//log in database
 		slog.push({source: dbSource, message: peripheral.advertisement.localName + ': found', priority: 'info'});
-	
+		
 		//Connect to everything!! TODO: only connect to whitelist devices
-		peripheral.connect(function(err) {
-			//log in database
-			slog.push({source: dbSource, message: peripheral.advertisement.localName + ': connected', priority: 'info'});
+		if(peripheral.advertisement.localName != 'BLE_Central'){
+			peripheral.connect(function(err) {
+				//log in database
+				slog.push({source: dbSource, message: peripheral.advertisement.localName + ': connected', priority: 'info'});
 			
-			//We are now connected, so discover if it exposes carServiceUuid
-			peripheral.discoverServices([carServiceUuid], function(err, services) {
-				services.forEach(function(service) {
+				//We are now connected, so discover if it exposes carServiceUuid
+				peripheral.discoverServices([carServiceUuid], function(err, services) {
+					services.forEach(function(service) {
 				
-					//If it's found, it must have that service running
-					//log in database
-					slog.push({source: dbSource, message: peripheral.advertisement.localName + ': found service: ' + service.uuid, priority: 'info'});
+						//If it's found, it must have that service running
+						//log in database
+						slog.push({source: dbSource, message: peripheral.advertisement.localName + ': found service: ' + service.uuid, priority: 'info'});
 
-					// So, discover if it has the carChatacteristic
-					//TODO: Perhaps car and error should be characteristics in the same service rather than different services?
-					service.discoverCharacteristics([carCharacteristicUuid], function(err, characteristics) {
-						characteristics.forEach(function(characteristic) {
+						// So, discover if it has the carChatacteristic
+						//TODO: Perhaps car and error should be characteristics in the same service rather than different services?
+						service.discoverCharacteristics([carCharacteristicUuid], function(err, characteristics) {
+							characteristics.forEach(function(characteristic) {
 													
-							//get characteristic object
-							carCharacteristic = characteristic;
+								//get characteristic object
+								carCharacteristic = characteristic;
 					
-							//read characteristic value
-							carCharacteristic.on('read', function(data, isNotification) { 					
-		 						//console.log('observer data', data);
-		 						self.emit('data-recieved', data);
-								//direction, from, message, logType
-		 						clog.push({
-		 							direction: 'IN', 
-		 							from: 'TODO: '+ peripheral.advertisement.localName,
-		 							message: data.toString('hex'),
-		 							logType: '1'
-	 							});
-							});
+								//read characteristic value
+								carCharacteristic.on('read', function(data, isNotification) { 					
+			 						//console.log('observer data', data);
+			 						self.emit('data-recieved', data);
+									//direction, from, message, logType
+			 						clog.push({
+			 							direction: 'IN', 
+			 							from: 'TODO: '+ peripheral.advertisement.localName,
+			 							message: data.toString('hex'),
+			 							logType: '1'
+		 							});
+								});
 
-							//enable notifications so we get updates
-							carCharacteristic.notify(true, function(error) {
-								//log in database
-								slog.push({source: dbSource, message: peripheral.advertisement.localName + ': listening for notifications', priority: 'info'});									
-							});
+								//enable notifications so we get updates
+								carCharacteristic.notify(true, function(error) {
+									//log in database
+									slog.push({source: dbSource, message: peripheral.advertisement.localName + ': listening for notifications', priority: 'info'});									
+								});
 							
-							callback(null);
+								callback(null);
+							});
 						});
 					});
 				});
 			});
-		});
+		}
 	});
 }
 
