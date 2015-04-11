@@ -20,16 +20,17 @@ var CarCharacteristic = function() {
 		onSubscribe: function(maxSize, updateValueCallback){
 			//slog.push({source: dbSource, message: 'characteristic subscribe', priority: 'debug'});	
 			
-			//if subscribed to, poll cmd every half second, and send update if has changed.
+			//if subscribed to, poll cmd every quarter second, and send update if has changed.
 			//TODO: make this better
 			setInterval(function() { 
 				if(cmd){
-					console.log(cmd);
+					
 					updateValueCallback(cmd);					
 					cmd = null;
 				}
-			}, 500);						
-		}/*,
+			}, 250);						
+		}, 
+		/*,
 		//Notify event - fires every time a notification is sent
 		onNotify: function(){
 			//slog.push({source: dbSource, message: 'characteristic notify', priority: 'debug'});
