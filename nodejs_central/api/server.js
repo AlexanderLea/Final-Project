@@ -1,8 +1,21 @@
-var http = require('http'),
-	url = require('url'),
+var //http = require('http'),
+	//url = require('url'),
 	logDb = require('./log_db'),
-	whitelistDb = require('./whitelist_db');
+	whitelistDb = require('./whitelist_db')
+	express = require('express');
+	
+var restapi = express();
 
+restapi.get('/whitelist', function(req, res){
+	data = whitelistDb.whitelistAll(function(err, data){
+		res.json(data);
+	});
+});
+
+restapi.listen(3000);
+
+console.log('server running on http://localhost:3000/xyz')
+/*
 var routes = {
   "/whitelist": function(parsedUrl) {    
     var whitelist;
