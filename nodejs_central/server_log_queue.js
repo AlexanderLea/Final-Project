@@ -1,5 +1,5 @@
 var	async = require('async'),
-	db = require('./log_database')
+	db = require('./api/log_db')
 
 var serverDbQueue = async.queue(function(record, callback){
 	//for each item in queue, call save to db method, replacing any null
