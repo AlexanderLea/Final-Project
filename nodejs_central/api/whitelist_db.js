@@ -15,15 +15,14 @@ module.exports = {
 		});
 	},
 
-	whitelistAll: function(getAllWhitelistCallback){
-		db.serialize(function(){
-			db.all('SELECT * FROM whitelist', function(err, rows){
-				if(err) {
-					getAllWhitelistCallback(err, null);
-					return;
-				}
-				getAllWhitelistCallback(null, rows);
+	whitelistAll: function(getAllWhitelistCallback){		
+		db.all('SELECT * FROM whitelist', function(err, rows){
+			if(err) {
+				getAllWhitelistCallback(err, null);
 				return;
-			});
+			}
+			getAllWhitelistCallback(null, rows);
+			return;
 		});
-	},
+	}
+};
