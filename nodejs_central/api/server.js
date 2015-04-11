@@ -1,12 +1,25 @@
 var http = require('http'),
 	url = require('url'),
-	logDb = require('./log_db');
+	logDb = require('./log_db'),
+	whitelistDb = require('./whitelist_db');
 
 var routes = {
   "/whitelist": function(parsedUrl) {    
-    return {
-      whitelist: "whitelist"
-    };
+    var whitelist;
+    
+    whitelistDb.whitelistAll(function(err, data){
+    	if(!err) {
+    		return {
+				id 				: data.id,
+				mac_addr 		: data.mac_addr,
+				friendly_name	: data.friendly_name,
+				description		: data.description,
+				ble_role		: data.ble_role
+			};
+		}
+    });
+    
+    
   },
   "/serverlog": function(parsedUrl) {    
     return {
@@ -15,7 +28,7 @@ var routes = {
   },
   "/communicationlog": function(parsedUrl) {    
     return {
-      communicationlog: "server log"
+      communicationlog: "cmms log"
     };
   }
 }
