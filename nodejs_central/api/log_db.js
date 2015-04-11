@@ -20,7 +20,7 @@ module.exports = {
 		});
 	},
 	
-	serverLogGetAll: function(getAllServerLogCallback){
+	serverLogAll: function(getAllServerLogCallback){
 		db.serialize(function(){
 			db.all('SELECT * FROM server_log', function(err, rows){
 				if(err) {
@@ -33,7 +33,7 @@ module.exports = {
 		});
 	},
 	
-	commsLogGetAll: function(getAllCommsLogCallback){
+	commsLogAll: function(getAllCommsLogCallback){
 		db.serialize(function(){
 			db.all('SELECT * FROM communication_log', function(err, rows){
 				if(err) {
