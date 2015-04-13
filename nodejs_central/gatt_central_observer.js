@@ -86,7 +86,7 @@ GattObserver.prototype.run = function(callback){
 								//direction, from, message, logType
 		 						clog.push({
 		 							direction: 'IN', 
-		 							from: 'peripheral.address,
+		 							from: peripheral.address,
 		 							message: data.toString('hex'),
 		 							logType: '1'
 	 							});
@@ -105,6 +105,7 @@ GattObserver.prototype.run = function(callback){
 					});						
 				}
 				else {
+					console.log('not connecting to: ', peripheral.address);
 					callback(null, 'nay');
 				}
 			});
