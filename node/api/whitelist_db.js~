@@ -1,7 +1,7 @@
 var sqlite3 = require('sqlite3').verbose(),
 	async = require('async');  
 	
-var db = new sqlite3.Database('../../devices.db');
+var db = new sqlite3.Database('../devices.db');
 
 module.exports = {
 	/**
@@ -15,12 +15,14 @@ module.exports = {
 		});
 	},
 
-	whitelistAll: function(getAllWhitelistCallback){		
+	whitelistAll: function(getAllWhitelistCallback){
+			console.log(1);		
 		db.all('SELECT * FROM whitelist', function(err, rows){
 			if(err) {
 				getAllWhitelistCallback(err, null);
 				return;
 			}
+					console.log(2);
 			getAllWhitelistCallback(null, rows);
 			return;
 		});

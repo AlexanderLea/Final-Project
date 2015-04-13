@@ -11,7 +11,7 @@ var noble = require('noble'),
 	async = require('async'),
 	slog = require('./server_log_queue').serverDbQueue,
 	clog = require('./server_log_queue').commsDbQueue,
-	db = require('./api/whitelist_db');
+	db = require('../api/whitelist_db');
 
 /** UUID declaration */
 var carServiceUuid		= '2a67';
@@ -32,17 +32,15 @@ sys.inherits(GattObserver, events.EventEmitter);
 
 GattObserver.prototype.run = function(callback){
 	var self = this;
-		
 	async.waterfall([
+		
 		function(whitelistCallback){
-			
 			var whitelist = new Array();
 			db.whitelistAll(function(err, rows){
 				if(!err){
 					rows.forEach(function(row){
 						whitelist.push(row.mac_addr.toLowerCase());		
 					});
-				
 					whitelistCallback(null, whitelist);
 				}
 				else {
@@ -51,7 +49,6 @@ GattObserver.prototype.run = function(callback){
 			});
 		},
 		function(whitelist, callback){
-	
 			noble.startScanning();
 			slog.push({
 				source: dbSource, 
@@ -112,7 +109,10 @@ GattObserver.prototype.run = function(callback){
 		}
 	], function(err, result){
 		//handle errors
-		console.log(result);
+		if(err)
+			console.log(err);
+		else
+			console.log(result);
 	});
 }
 
