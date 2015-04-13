@@ -2,6 +2,7 @@ var	async = require('async'),
 	db = require('./api/log_db')
 
 var serverDbQueue = async.queue(function(record, callback){
+	console.log('here');
 	//for each item in queue, call save to db method, replacing any null
 	// character values in the string
 	db.serverLogAdd(record.source, record.message.replace('\0', ''), record.priority);
