@@ -1,0 +1,22 @@
+{
+  "name": "final-project",
+  "version": "1.0.0",
+  "description": "This project is an investigation into the feasibility of replacing the copper wiring of automobile exterior lights with wirelessly connected microcontrollers, similar to the fly-by-wireless concept, currently being developed for aircraft.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexanderlea/final-project"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexanderlea/final-project/issues"
+  },
+  "homepage": "https://github.com/alexanderlea/final-project",
+  "dependencies": {
+    "bluebird": "^2.9.24"
+  }
+}
