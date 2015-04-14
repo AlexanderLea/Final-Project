@@ -30,7 +30,7 @@ function GattObserver() {
 sys.inherits(GattObserver, events.EventEmitter);
 
 
-GattObserver.prototype.run = function(whitelist, callback){
+GattObserver.prototype.run = function(whitelist, runCallback){
 	var self = this;
 	
 	noble.startScanning();
@@ -64,14 +64,13 @@ GattObserver.prototype.run = function(whitelist, callback){
 						characteristic.on('data', function(data, isNotification) { 					
 	 						//console.log('observer data', data);
 	 						self.emit('data-recieved', data);
-							//direction, from, message, logType
+							//TODO: Distinguish between errors and normal messages
 	 						clog.push({
 	 							direction: 'IN', 
 	 							from: peripheral.address,
 	 							message: data.toString('hex'),
 	 							logType: '1'
-							});
-							callback(null);
+							});							
 						});
 
 						//enable notifications so we get updates
@@ -79,21 +78,22 @@ GattObserver.prototype.run = function(whitelist, callback){
 							//log in database
 							slog.push({
 								source: dbSource,
-								message: peripheral.address + ', ' + characteristic.
+								message: peripheral.address 
+									+ ', characteristic: ' 
+									+ characteristic.uuid
 									+ ': listening for notifications', 
 								priority: 'info'
-							});									
-						});	
-					
-					})
-
-										
+							});			
+							//callback and wait for the event!
+							runCallback(null);						
+						});						
+					})									
 				});
 			});						
 		}
 		else {
 			console.log('not connecting to: ', peripheral.address);
-			callback();
+			runCallback(null);
 		}
 	});
 }
