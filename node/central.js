@@ -21,17 +21,37 @@ var peripheralRunning = false, observerRunning = false;
 noble.on('stateChange', function(state) {
 	if (state === 'poweredOn') {		
 		async.parallel([
-			//start Gatt Observer
-			function(observerCallback){
-				gattObserver.run(function(err){
-					if(err){
-						observerCallback(err);
-					} else {
-						observerRunning = true;
-						observerCallback();
+			function(callback){
+				async.waterfall([
+		
+					function(whitelistCallback){
+						var whitelist = new Array();
+						db.whitelistAll(function(err, rows){
+							if(!err){
+								rows.forEach(function(row){
+									whitelist.push(row.mac_addr.toLowerCase());		
+								});
+								whitelistCallback(null, whitelist);
+							}
+							else {
+								whitelistCallback(err);
+							}
+						});
+					},
+
+					//start Gatt Observer
+					function(whitelist, observerCallback){
+						gattObserver.run(whitelist, function(err){
+							if(err){
+								observerCallback(err);
+							} else {
+								observerRunning = true;
+								observerCallback();
+							}
+						});
 					}
-				});
-			},
+				], callback);
+			},									
 			//start Gatt Peripheral
 			function(peripheralCallback){
 				gattPeripheral.run(function(err){
