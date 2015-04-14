@@ -24,7 +24,7 @@ var runGattPeripheral = Promise.promisify(gattPeripheral.run)
 //if Bluetooth is on, let's go
 noble.on('stateChange', function(state) {
 	if (state === 'poweredOn') {	
-		
+		//TODO: need to run API server here too!
 		var gattObserverPromise = whitelistAll()
 			.then(function(rows) {
 				return rows.map(function(row){
@@ -48,8 +48,7 @@ noble.on('stateChange', function(state) {
 		})
 		.catch(function(err) {
 			console.log(err)
-		})
-		
+		})		
 	}
 	else { //don't scan		
 		gattPeripheral.stop();
