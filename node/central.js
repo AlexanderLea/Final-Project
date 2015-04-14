@@ -5,8 +5,9 @@
 process.env.NOBLE_HCI_DEVICE_ID=0;
 process.env.BLENO_HCI_DEVICE_ID=1;
 
-var noble = require('noble'),
-	async = require('async');
+var noble 	= require('noble'),
+	async 	= require('async'),
+	db		= require('./api/log_db') 
 	
 var GattObserver = require('./gatt_central_observer');
 var GattPeripheral = require('./gatt_central_peripheral');
@@ -23,7 +24,7 @@ noble.on('stateChange', function(state) {
 		async.parallel([
 			function(callback){
 				async.waterfall([
-		
+					//get whitelist
 					function(whitelistCallback){
 						var whitelist = new Array();
 						db.whitelistAll(function(err, rows){
