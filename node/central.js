@@ -7,11 +7,11 @@ process.env.BLENO_HCI_DEVICE_ID=1;
 
 var noble 	= require('noble'),
 	async 	= require('async'),
-	db		= require('./api/log_db'),
+	db		= require('./api/whitelist_db'),
 	Promise = require("bluebird");
 	
-var GattObserver = require('./lib/gatt_central_observer');
-var GattPeripheral = require('./lib/gatt_central_peripheral');
+var GattObserver = require('./lib/gatt_observer');
+var GattPeripheral = require('./lib/gatt_peripheral');
 
 //Instantiate objects
 var gattPeripheral = new GattPeripheral('CAR_Central');
