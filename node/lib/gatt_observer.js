@@ -77,6 +77,7 @@ GattObserver.prototype.run = function(whitelist, callback){
 					carCharacteristic.notify(true, function(error) {
 						//log in database
 						slog.push({
+							source: dbSource,
 							message: peripheral.address 
 								+ ': listening for notifications', 
 							priority: 'info'
@@ -92,8 +93,7 @@ GattObserver.prototype.run = function(whitelist, callback){
 }
 
 GattObserver.prototype.stop = function(){
-	//TODO
-	console.log('TODO: need to close some stuff here.');
+	console.log("this does nothing. TODO");	
 }
 
 module.exports = GattObserver;

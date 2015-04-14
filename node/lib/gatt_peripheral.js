@@ -16,8 +16,6 @@ var dbSource = 'gatt_central_peripheral';
 
 var carService;
 
-//TODO: on connection and disconnection events
-
 function GattPeripheral(_name) {
 	name = _name;
 	carService = new CarService();
