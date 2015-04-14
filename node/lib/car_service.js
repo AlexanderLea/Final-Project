@@ -5,7 +5,7 @@ var util = require('util'),
 var BlenoPrimaryService = bleno.PrimaryService;
 
 var carCharacteristic = new CarCharacteristic();
-var errCharacteristic = new ErrCharacterisitc();
+var errCharacteristic = new ErrCharacteristic();
 
 function CarService() {
     CarService.super_.call(this, {
