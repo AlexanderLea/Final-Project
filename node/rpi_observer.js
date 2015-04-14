@@ -10,7 +10,8 @@
 * 3.2.2.1 - if err, report it
 */
 
-process.env.BLENO_HCI_DEVICE_ID=0;
+process.env.NOBLE_HCI_DEVICE_ID=0;
+process.env.BLENO_HCI_DEVICE_ID=1;
 
 var bleno = require('bleno'),
 	async = require('async');
