@@ -2,7 +2,6 @@ var util = require('util'),
 	bleno = require('bleno'),
 	slog = require('./server_log_queue').serverDbQueue;
 
-//TODO: deal with disconnections bleno.disconnect(); to stop timer and deal with associated memory leaks
 var cmd;
 var poll;
 
@@ -31,7 +30,7 @@ var CarCharacteristic = function() {
 			}, 250);						
 		}, 
 		onUnsubscribe: function(){
-			slog.push({source: 'car_characteristic', message: 'characteristic unsubscribe', priority: 'debug'});
+			//slog.push({source: 'car_characteristic', message: 'characteristic unsubscribe', priority: 'debug'});
 			clearInterval(poll);
 		}
 	});

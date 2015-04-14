@@ -9,7 +9,7 @@ var util = require('util'),
 	slog = require('./server_log_queue').serverDbQueue,
 	clog = require('./server_log_queue').commsDbQueue;
 
-var CarService = require('./lib/car_service');
+var CarService = require('./car_service');
 
 var name = 'BLE_Central';
 var dbSource = 'gatt_central_peripheral';
