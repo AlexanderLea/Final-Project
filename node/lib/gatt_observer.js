@@ -16,7 +16,7 @@ var noble = require('noble'),
 /** UUID declaration */
 var carServiceUuid		= '2a67';
 var carCharacteristicUuid 	= '1817';
-var errorServiceUuid = '';
+var errorServiceUuid = '1818';
 
 /** Variable to hold carCharacteristic */
 var carCharacteristic = null;
@@ -55,39 +55,45 @@ GattObserver.prototype.run = function(whitelist, callback){
 				});
 				
 				peripheral.discoverSomeServicesAndCharacteristics(
-					[carServiceUuid], [carCharacteristicUuid], 
+					[carServiceUuid], [carCharacteristicUuid, errorCharacteristicUuid], 
 					function(err, services, characteristics){
 				
-					carCharacteristic = characteristics[0];
-
-					//read characteristic value
-					carCharacteristic.on('read', function(data, isNotification) { 					
- 						//console.log('observer data', data);
- 						self.emit('data-recieved', data);
-						//direction, from, message, logType
- 						clog.push({
- 							direction: 'IN', 
- 							from: peripheral.address,
- 							message: data.toString('hex'),
- 							logType: '1'
+					characteristics.foreach(function(characteristic){
+						
+						//read characteristic value
+						characteristic.on('data', function(data, isNotification) { 					
+	 						//console.log('observer data', data);
+	 						self.emit('data-recieved', data);
+							//direction, from, message, logType
+	 						clog.push({
+	 							direction: 'IN', 
+	 							from: peripheral.address,
+	 							message: data.toString('hex'),
+	 							logType: '1'
+							});
+							callback(null);
 						});
-					});
 
-					//enable notifications so we get updates
-					carCharacteristic.notify(true, function(error) {
-						//log in database
-						slog.push({
-							source: dbSource,
-							message: peripheral.address 
-								+ ': listening for notifications', 
-							priority: 'info'
-						});									
-					});						
+						//enable notifications so we get updates
+						characteristic.notify(true, function(error) {
+							//log in database
+							slog.push({
+								source: dbSource,
+								message: peripheral.address + ', ' + characteristic.
+									+ ': listening for notifications', 
+								priority: 'info'
+							});									
+						});	
+					
+					})
+
+										
 				});
 			});						
 		}
 		else {
 			console.log('not connecting to: ', peripheral.address);
+			callback();
 		}
 	});
 }
