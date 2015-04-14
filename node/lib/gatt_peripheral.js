@@ -21,7 +21,7 @@ function GattPeripheral(_name) {
 	carService = new CarService();
 }
 
-GattPeripheral.prototype.run = function(){
+GattPeripheral.prototype.run = function(callback){
 	//start advertising!
 	bleno.on('stateChange', function(state) {
 		if (state === 'poweredOn') {
@@ -30,6 +30,9 @@ GattPeripheral.prototype.run = function(){
 			bleno.startAdvertising(name, [carService.uuid], function(err) {
 				if (err) {
 					slog.push({source: dbSource, message: err, priority: 'err'});
+					callback(err);
+				} else {
+					callback(null);
 				}
 			});
 		}
