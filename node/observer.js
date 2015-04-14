@@ -1,7 +1,8 @@
 process.env.NOBLE_HCI_DEVICE_ID=0;
 
 var noble = require('noble'),
-	async = require('async');
+	async = require('async'),	
+	slog = require('./server_log_queue').serverDbQueue;
 	
 var GattObserver = require('./lib/gatt_observer');
 
@@ -13,7 +14,11 @@ noble.on('stateChange', function(state) {
 	
 		gattObserver.run(function(err){
 			if(err){
-				//TODO: do something with error
+				slog.push({
+					source: 'observer', 
+					message: 'error: ' + err, 
+					priority: 'err'
+				});
 			}
 		});
 	}	
