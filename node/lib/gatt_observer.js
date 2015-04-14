@@ -16,7 +16,7 @@ var noble = require('noble'),
 /** UUID declaration */
 var carServiceUuid		= '2a67';
 var carCharacteristicUuid 	= '1817';
-var errorServiceUuid = '1818';
+var errorCharacteristicUuid = '1818';
 
 /** Variable to hold carCharacteristic */
 var carCharacteristic = null;
@@ -42,7 +42,6 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 
 	//This won't deal with multiple devices!!
 	noble.on('discover', function(peripheral) {
-
 		//if MAC is in whitelist
 		if(whitelist.indexOf(peripheral.address) > -1){
 			//connect
@@ -58,7 +57,7 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 					[carServiceUuid], [carCharacteristicUuid, errorCharacteristicUuid], 
 					function(err, services, characteristics){
 				
-					characteristics.foreach(function(characteristic){
+					characteristics.forEach(function(characteristic){
 						
 						//read characteristic value
 						characteristic.on('data', function(data, isNotification) { 					
@@ -84,12 +83,13 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 									+ ': listening for notifications', 
 								priority: 'info'
 							});			
-							//callback and wait for the event!
+							//callback
 							runCallback(null);						
 						});						
 					})									
 				});
-			});						
+			});
+					
 		}
 		else {
 			console.log('not connecting to: ', peripheral.address);
