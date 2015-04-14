@@ -2,7 +2,7 @@ process.env.NOBLE_HCI_DEVICE_ID=0;
 
 var noble = require('noble'),
 	async = require('async'),	
-	slog = require('./server_log_queue').serverDbQueue;
+	slog = require('./lib/server_log_queue').serverDbQueue;
 	
 var GattObserver = require('./lib/gatt_observer');
 
@@ -12,7 +12,7 @@ var gattObserver = new GattObserver();
 noble.on('stateChange', function(state) {
 	if (state === 'poweredOn') {	
 	
-		gattObserver.run(function(err){
+		gattObserver.run(['c4:4f:b7:b1:41:d7'], function(err){
 			if(err){
 				slog.push({
 					source: 'observer', 
