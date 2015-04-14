@@ -7,70 +7,48 @@ process.env.BLENO_HCI_DEVICE_ID=1;
 
 var noble 	= require('noble'),
 	async 	= require('async'),
-	db		= require('./api/log_db') 
+	db		= require('./api/log_db'),
+	Promise = require("bluebird");
 	
-var GattObserver = require('./gatt_central_observer');
-var GattPeripheral = require('./gatt_central_peripheral');
+var GattObserver = require('./lib/gatt_central_observer');
+var GattPeripheral = require('./lib/gatt_central_peripheral');
 
 //Instantiate objects
-var gattPeripheral = new GattPeripheral();
+var gattPeripheral = new GattPeripheral('CAR_Central');
 var gattObserver = new GattObserver();
 
-var peripheralRunning = false, observerRunning = false;
+var whitelistAll = Promise.promisify(db.whitelistAll)
+var runGattObserver = Promise.promisify(gattObserver.run)
+var runGattPeripheral = Promise.promisify(gattPeripheral.run)
 
 //if Bluetooth is on, let's go
 noble.on('stateChange', function(state) {
-	if (state === 'poweredOn') {		
-		async.parallel([
-			function(callback){
-				async.waterfall([
-					//get whitelist
-					function(whitelistCallback){
-						var whitelist = new Array();
-						db.whitelistAll(function(err, rows){
-							if(!err){
-								rows.forEach(function(row){
-									whitelist.push(row.mac_addr.toLowerCase());		
-								});
-								whitelistCallback(null, whitelist);
-							}
-							else {
-								whitelistCallback(err);
-							}
-						});
-					},
+	if (state === 'poweredOn') {	
+		
+		var gattObserverPromise = whitelistAll()
+			.then(function(rows) {
+				return rows.map(function(row){
+					return row.mac_addr.toLowerCase()
+				})
+			})
+			.then(function(macAddresses) {
+				return runGattObserver(macAddresses)
+			})
+			.catch(function(err) {
+				console.log(err)
+			});
 
-					//start Gatt Observer
-					function(whitelist, observerCallback){
-						gattObserver.run(whitelist, function(err){
-							if(err){
-								observerCallback(err);
-							} else {
-								observerRunning = true;
-								observerCallback();
-							}
-						});
-					}
-				], callback);
-			},									
-			//start Gatt Peripheral
-			function(peripheralCallback){
-				gattPeripheral.run(function(err){
-					if(err){
-						peripheralCallback(err);
-					} else {
-						observerRunning = true;
-						peripheralCallback();
-					}
-				});
-			}
-		], function(err){
-			if(err){
-				console.log(err);
-			} else {
-				console.log('both running!');
-			}
-		});
+		var gattPeripheralPromise = runGattPeripheral()
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		Promise.all([gattObserverPromise, gattPeripheralPromise]).then(function() {
+			console.log("all things done");
+		})
+		.catch(function(err) {
+			console.log(err)
+		})
 		
 	}
 	else { //don't scan		
