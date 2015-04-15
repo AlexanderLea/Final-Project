@@ -40,7 +40,7 @@ GattPeripheral.prototype.run = function(){
 			else {
 				bleno.stopAdvertising();
 				slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
-				reject();
+				reject('Bleno is off');
 			}
 		});		
 		
@@ -51,10 +51,10 @@ GattPeripheral.prototype.run = function(){
 			  		carService
 				]);
 				slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
-				resolve();
+				resolve('advertising started');
 		 	} else {
 		 		slog.push({source: dbSource, message: err, priority: 'err'});
-		 		reject();
+		 		reject(err);
  			} 		
 		});	
 	});

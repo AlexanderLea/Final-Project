@@ -28,7 +28,6 @@ util.inherits(GattObserver, events.EventEmitter);
 GattObserver.prototype.run = function(whitelist, runCallback){
 
 	var _this = this;
-	console.log(Object.getPrototypeOf(this));	
 	
 	noble.startScanning();
 	slog.push({
@@ -91,7 +90,7 @@ return new Promise(function(resolve, reject){
 		}
 		else {
 			//console.log('not connecting to: ', peripheral.address);
-			resolve(null);
+			resolve();
 		}
 	});
 });

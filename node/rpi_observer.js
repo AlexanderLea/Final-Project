@@ -23,27 +23,42 @@ var bleno = require('bleno'),
 var gattPeripheral = new GattPeripheral('RPI_Observer');
 var gattObserver = new GattObserver();
 
-var runGattObserver = Promise.promisify(gattObserver.run)
-var runGattPeripheral = Promise.promisify(gattPeripheral.run)
-
 var serverAddr;
 
 //1
-var gattPeripheralPromise = runGattPeripheral()
-		.then(function() {
+var gattPeripheralPromise = gattPeripheral.run()
+		.then(function(msg) {
+			console.log(msg);
 			//3
-			bleno.on('accept', callback(clientAddress){
-				serverAddr = clientAddress
-				return clientAddress;
+			bleno.on('accept', function(clientAddress) {
+				//serverAddr = clientAddress
+				console.log(serverAddr);
+				
+				return gattObserver.run([clientAddress])
+				
 			});
+		},
+		function(err){
+			console.log(err);
 		})
-		.then(function(clientAddress) {
+		/*.then(function(clientAddress) {
+			console.log('running observer');
 			//3.1 & 3.2
-			return runGattObserver([clientAddress])
+			
+		})*/
+		.catch(function(err) {
+			console.log(err)
+		});							
+		
+
+Promise.all([gattPeripheralPromise]).then(function() {
+			//peripheral has finished, so now run observer
+			console.log('peripheral has connected - run observer');
+			//gattObserver.run([serverAddr]);
 		})
 		.catch(function(err) {
 			console.log(err)
-		});		
+		})	
 
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
