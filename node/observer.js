@@ -14,13 +14,13 @@ var runGattObserver = Promise.promisify(gattObserver.run)
 //if Bluetooth is on, let's go
 noble.on('stateChange', function(state) {
 	if (state === 'poweredOn') {	
-	
+	/*
 		var gattObserverPromise = runGattObserver(['c4:4f:b7:b1:41:d7'])			
 			.catch(function(err) {
 				console.log(err)
 			});
-	
-		/*gattObserver.run(['c4:4f:b7:b1:41:d7'], function(err){
+	*/
+		gattObserver.run(['c4:4f:b7:b1:41:d7'], function(err){
 			if(err){
 				slog.push({
 					source: 'observer', 
@@ -28,7 +28,7 @@ noble.on('stateChange', function(state) {
 					priority: 'err'
 				});
 			}
-		});*/
+		});
 	}	
 });
 
