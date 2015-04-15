@@ -6,6 +6,7 @@ console.log('peripheral using device: ', process.env.BLENO_HCI_DEVICE_ID);
 
 var util = require('util'),
 	bleno = require('bleno'),
+	Promise = require('bluebird'),
 	slog = require('./server_log_queue').serverDbQueue,
 	clog = require('./server_log_queue').commsDbQueue;
 
@@ -21,40 +22,46 @@ function GattPeripheral(_name) {
 	carService = new CarService();
 }
 
-GattPeripheral.prototype.run = function(callback){
-	//start advertising!
-	bleno.on('stateChange', function(state) {
-		if (state === 'poweredOn') {
+GattPeripheral.prototype.run = function(){
 
-			//start advertising!
-			bleno.startAdvertising(name, [carService.uuid], function(err) {
-				if (err) {
-					slog.push({source: dbSource, message: err, priority: 'err'});
-					callback(err);
-				} else {
-					callback(null);
-				}
-			});
-		}
-		else {
-			bleno.stopAdvertising();
-			slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
-		}
-	});
+	return new Promise(function(resolve, reject){
+		//start advertising!
+		bleno.on('stateChange', function(state) {
+			if (state === 'poweredOn') {
 
-	bleno.on('advertisingStart', function(err) {
-  		if (!err) {			
-			//Add services
-			bleno.setServices([
-		  		carService
-			]);
-			slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
-	 	} else {
-	 		slog.push({source: dbSource, message: err, priority: 'err'});
-	 	}
+				//start advertising!
+				bleno.startAdvertising(name, [carService.uuid], function(err) {
+					if (err) {
+						slog.push({source: dbSource, message: err, priority: 'err'});
+						reject(err);
+					} 
+				});
+			}
+			else {
+				bleno.stopAdvertising();
+				slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
+				reject();
+			}
+		});		
+		
+		bleno.on('advertisingStart', function(err) {
+			if (!err) {			
+				//Add services
+				bleno.setServices([
+			  		carService
+				]);
+				slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
+				resolve();
+		 	} else {
+		 		slog.push({source: dbSource, message: err, priority: 'err'});
+		 		reject();
+ 			} 		
+		});	
 	});
 }
 
+
+		
 GattPeripheral.prototype.stop = function(){
 	slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
 	bleno.stopAdvertising();

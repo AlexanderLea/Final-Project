@@ -14,7 +14,6 @@ var gattPeripheral = new GattPeripheral('CAR_Central');
 var gattObserver = new GattObserver();
 
 var whitelistAll = Promise.promisify(db.whitelistAll)
-var runGattPeripheral = Promise.promisify(gattPeripheral.run)
 
 //if Bluetooth is on, let's go
 noble.on('stateChange', function(state) {
@@ -33,7 +32,7 @@ noble.on('stateChange', function(state) {
 				console.log(err)
 			});
 
-		var gattPeripheralPromise = runGattPeripheral()
+		var gattPeripheralPromise = gattPeripheral.run()
 			.catch(function(err) {
 				console.log(err)
 			})
