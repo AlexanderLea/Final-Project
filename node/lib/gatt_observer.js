@@ -2,8 +2,9 @@ console.log('observer using device: ', process.env.NOBLE_HCI_DEVICE_ID);
 
 var noble = require('noble'),
 	events = require('events'),
-	sys = require('sys'),
+	util = require('util'),
 	async = require('async'),
+	Promise = require('bluebird'),
 	slog = require('./server_log_queue').serverDbQueue,
 	clog = require('./server_log_queue').commsDbQueue,
 	db = require('../api/whitelist_db');
@@ -22,18 +23,21 @@ function GattObserver() {
 	events.EventEmitter.call(this);
 }
 
-sys.inherits(GattObserver, events.EventEmitter);
+util.inherits(GattObserver, events.EventEmitter);
 
 GattObserver.prototype.run = function(whitelist, runCallback){
+
 	var _this = this;
+	console.log(Object.getPrototypeOf(this));	
 	
 	noble.startScanning();
 	slog.push({
 		source: dbSource, 
 		message: 'scanning for peripherals', 
 		priority: 'info'
-	});		
+	});	
 
+return new Promise(function(resolve, reject){
 	noble.on('discover', function(peripheral) {
 		//if MAC is in whitelist
 		if(whitelist.indexOf(peripheral.address) > -1){
@@ -78,18 +82,23 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 								priority: 'info'
 							});			
 							//callback
-							runCallback(null);						
+							resolve();						
 						});						
 					})									
-				});
+				});//perhaps reject something?
 			});
 					
 		}
 		else {
 			//console.log('not connecting to: ', peripheral.address);
-			runCallback(null);
+			resolve(null);
 		}
 	});
+});
+
+	
+
+	
 }
 
 GattObserver.prototype.stop = function(){
