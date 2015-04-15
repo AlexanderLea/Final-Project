@@ -1,8 +1,3 @@
-/**
-* Using https://github.com/sandeepmistry/noble, which using Bluez
-* Based fairly heavily on the demos on the wiki
-*/	
-
 console.log('observer using device: ', process.env.NOBLE_HCI_DEVICE_ID);
 
 var noble = require('noble'),
@@ -23,15 +18,14 @@ var carCharacteristic = null;
 
 var dbSource = 'gatt_central_observer';
 
-function GattObserver() {	
-	//construct object
+function GattObserver() {
 	events.EventEmitter.call(this);
 }
+
 sys.inherits(GattObserver, events.EventEmitter);
 
-
 GattObserver.prototype.run = function(whitelist, runCallback){
-	var self = this;
+	var _this = this;
 	
 	noble.startScanning();
 	slog.push({
@@ -40,7 +34,6 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 		priority: 'info'
 	});		
 
-	//This won't deal with multiple devices!!
 	noble.on('discover', function(peripheral) {
 		//if MAC is in whitelist
 		if(whitelist.indexOf(peripheral.address) > -1){
@@ -60,9 +53,10 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 					characteristics.forEach(function(characteristic){
 						
 						//read characteristic value
-						characteristic.on('data', function(data, isNotification) { 					
-	 						//console.log('observer data', data);
-	 						self.emit('data-recieved', data);
+						characteristic.on('data', function(data, isNotification) { 
+							//emit data-recieved event
+	 						_this.emit('data-recieved', data);
+	 						
 							//TODO: Distinguish between errors and normal messages
 	 						clog.push({
 	 							direction: 'IN', 
@@ -92,7 +86,7 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 					
 		}
 		else {
-			console.log('not connecting to: ', peripheral.address);
+			//console.log('not connecting to: ', peripheral.address);
 			runCallback(null);
 		}
 	});

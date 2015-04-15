@@ -1,14 +1,10 @@
-/**
-* Using https://github.com/sandeepmistry/noble, which using Bluez
-* Based fairly heavily on the demos on the wiki
-*/
 process.env.NOBLE_HCI_DEVICE_ID=0;
 process.env.BLENO_HCI_DEVICE_ID=1;
 
 var noble 	= require('noble'),
 	async 	= require('async'),
 	db		= require('./api/whitelist_db'),
-	Promise = require("bluebird");
+	Promise = require('bluebird');
 	
 var GattObserver = require('./lib/gatt_observer');
 var GattPeripheral = require('./lib/gatt_peripheral');

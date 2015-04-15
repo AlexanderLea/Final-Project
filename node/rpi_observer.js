@@ -48,4 +48,5 @@ var gattPeripheralPromise = runGattPeripheral()
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
+	console.log('data recieved!: ', data.toString('hex'));
 });
