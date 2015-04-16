@@ -51,7 +51,7 @@ GattPeripheral.prototype.run = function(){
 			  		carService
 				]);
 				slog.push({source: dbSource, message: name + ': advertising', priority: 'info'});
-				resolve('advertising started');
+				resolve();
 		 	} else {
 		 		slog.push({source: dbSource, message: err, priority: 'err'});
 		 		reject(err);

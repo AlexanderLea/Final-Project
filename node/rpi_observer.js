@@ -53,7 +53,7 @@ var gattPeripheralPromise = gattPeripheral.run()
 
 Promise.all([gattPeripheralPromise]).then(function() {
 			//peripheral has finished, so now run observer
-			console.log('peripheral has connected - run observer');
+			//console.log('peripheral has connected - run observer');
 			//gattObserver.run([serverAddr]);
 		})
 		.catch(function(err) {
