@@ -15,37 +15,43 @@ process.env.BLENO_HCI_DEVICE_ID=1;
 
 var bleno = require('bleno'),
 	async = require('async'),
-	Promise = require("bluebird"),
+	Promise = require('bluebird'),
 	GattPeripheral = require('./lib/gatt_peripheral'),
 	GattObserver = require('./lib/gatt_observer');
 	
 //initialise Observer and Peripheral
 var gattPeripheral = new GattPeripheral('RPI_Observer');
 var gattObserver = new GattObserver();
+//5C:F3:70:60:DC:38
 
 var serverAddr;
+
+//console.log('connecting to 00:1a:7d:da:71:0C');
+//gattObserver.run(['00:1a:7d:da:71:0c']);
 
 //1
 var gattPeripheralPromise = gattPeripheral.run()
 		.then(function(msg) {
-			console.log(msg);
+			
 			//3
 			bleno.on('accept', function(clientAddress) {
 				//serverAddr = clientAddress
-				console.log(clientAddress);
+				console.log('Connected to ' + clientAddress + ' as peripheral sender');
 				
-				return gattObserver.run([clientAddress])
+//connect to 5C:F3:70:60:DC:38
+				return gattObserver.run(['00:1a:7d:da:71:0c'])
 				
 			});
+
 		},
 		function(err){
 			console.log(err);
 		})
-		/*.then(function(clientAddress) {
-			console.log('running observer');
+		//.then(function(clientAddress) {
+		//	console.log('running observer');
 			//3.1 & 3.2
 			
-		})*/
+		//})
 		.catch(function(err) {
 			console.log(err)
 		});							
