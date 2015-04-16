@@ -74,7 +74,7 @@ gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
 	switch(data.toString('hex')){
 		/* Indicator on */
-		case '242000203DBD0008':
+		case '242000203dbd0008':
 			console.log('indicator on');
 			tick = setInterval(function(){
 				indicatorOn = !indicatorOn;   
@@ -84,7 +84,7 @@ gattObserver.on('data-recieved', function(data) {
 			  }, 500);
 			break;
 		/* Indicator off */			
-		case '2c2000203DBD0008':
+		case '2c2000203dbd0008':
 			console.log('indicator off');
 			clearInterval(tick);
 			gpio.write(26, false, function(err){
@@ -93,18 +93,16 @@ gattObserver.on('data-recieved', function(data) {
 			  	});
 			break;
 		/* Brake on */
-		case '342000203DBD0008':
-			console.log('brake off');
-			clearInterval(tick);
+		case '342000203dbd0008':
+			console.log('brake on');
 			gpio.write(24, false, function(err){
 				  if (err) throw err;
 				  indicatorOn = false;     
 			  	});
 			break;
 		/* Brake off */			
-		case '3c2000203DBD0008':
+		case '3c2000203dbd0008':
 			console.log('brake off');
-			clearInterval(tick);
 			gpio.write(24, false, function(err){
 				  if (err) throw err;
 				  indicatorOn = false;     
