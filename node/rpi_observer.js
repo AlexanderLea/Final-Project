@@ -73,7 +73,8 @@ Promise.all([gattPeripheralPromise]).then(function() {
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
 	switch(data.toString('hex')){
-		case '2220002032000000':
+		/* Indicator on */
+		case '242000203DBD0008':
 			console.log('indicator on');
 			tick = setInterval(function(){
 				indicatorOn = !indicatorOn;   
@@ -82,7 +83,8 @@ gattObserver.on('data-recieved', function(data) {
 			  	});
 			  }, 500);
 			break;
-		case '2a20002032000000':
+		/* Indicator off */			
+		case '2c2000203DBD0008':
 			console.log('indicator off');
 			clearInterval(tick);
 			gpio.write(26, false, function(err){
@@ -90,9 +92,27 @@ gattObserver.on('data-recieved', function(data) {
 				  indicatorOn = false;     
 			  	});
 			break;
+		/* Brake on */
+		case '342000203DBD0008':
+			console.log('brake off');
+			clearInterval(tick);
+			gpio.write(24, false, function(err){
+				  if (err) throw err;
+				  indicatorOn = false;     
+			  	});
+			break;
+		/* Brake off */			
+		case '3c2000203DBD0008':
+			console.log('brake off');
+			clearInterval(tick);
+			gpio.write(24, false, function(err){
+				  if (err) throw err;
+				  indicatorOn = false;     
+			  	});
+			break;
 	}
 	
-	console.log('data recieved!: ', data.toString('hex'));
+	//console.log('data recieved!: ', data.toString('hex'));
 });
 
 gattPeripheral.on('disconnect', function(clientAddress){
