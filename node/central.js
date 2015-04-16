@@ -4,7 +4,7 @@ process.env.BLENO_HCI_DEVICE_ID=1;
 var noble 	= require('noble'),
 	async 	= require('async'),
 	db		= require('./api/whitelist_db'),
-	slog = require('./server_log_queue').serverDbQueue,
+	slog = require('./lib/server_log_queue').serverDbQueue,
 	Promise = require('bluebird');
 	
 var GattObserver = require('./lib/gatt_observer');

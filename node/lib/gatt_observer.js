@@ -17,7 +17,7 @@ var errorCharacteristicUuid = '1818';
 /** Variable to hold carCharacteristic */
 var carCharacteristic = null;
 
-var dbSource = 'gatt_central_observer';
+var dbSource = 'gatt_observer';
 
 function GattObserver() {
 	events.EventEmitter.call(this);

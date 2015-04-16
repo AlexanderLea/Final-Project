@@ -7,14 +7,14 @@ console.log('peripheral using device: ', process.env.BLENO_HCI_DEVICE_ID);
 var util = require('util'),
 	bleno = require('bleno'),
 	Promise = require('bluebird'),
-	events = reqire('events'),
+	events = require('events'),
 	slog = require('./server_log_queue').serverDbQueue,
 	clog = require('./server_log_queue').commsDbQueue;
 
 var CarService = require('./car_service');
 
 var name;
-var dbSource = 'gatt_central_peripheral';
+var dbSource = 'gatt__peripheral';
 
 var carService;
 
