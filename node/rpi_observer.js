@@ -96,7 +96,7 @@ gattObserver.on('data-recieved', function(data) {
 		/* Brake on */
 		case '342000203dbd0008':
 			console.log('brake on');
-			gpio.write(24, false, function(err){
+			gpio.write(24, true, function(err){
 				  if (err) throw err;
 				  indicatorOn = false;     
 			  	});
