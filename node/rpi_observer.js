@@ -30,9 +30,12 @@ var tick, indicatorOn;
 
 function gpioCallback(){};
 
+gattObserver.run(['00:1a:7d:da:71:0c'])
+
+/*
 //1
 var gattPeripheralPromise = gattPeripheral.run()
-		.then(function(msg) {
+		.then(function() {
 			
 			//3
 			bleno.on('accept', function(clientAddress) {
@@ -66,7 +69,7 @@ Promise.all([gattPeripheralPromise]).then(function() {
 		.catch(function(err) {
 			console.log(err)
 		})	
-
+*/
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
@@ -74,18 +77,18 @@ gattObserver.on('data-recieved', function(data) {
 		case '2220002032000000':
 			console.log('indicator on');
 			tick = setInterval(function(){
+				indicatorOn = !indicatorOn;   
 				gpio.write(26, indicatorOn, function(err){
 				  if (err) throw err;
-				  indicatorOn = !on;   
 			  	});
 			  }, 500);
 			break;
 		case '2a20002032000000':
 			console.log('indicator off');
 			clearInterval(tick);
-			gpio.write(26, indicatorOn, function(err){
+			gpio.write(26, false, function(err){
 				  if (err) throw err;
-				  indicatorOn = !on ;     
+				  indicatorOn = false;     
 			  	});
 			break;
 	}
