@@ -1,8 +1,8 @@
-process.env.BLENO_HCI_DEVICE_ID=0;
+process.env.BLENO_HCI_DEVICE_ID=1;
 
 var bleno = require('bleno'),
 	async = require('async'),	
-	slog = require('./server_log_queue').serverDbQueue;
+	slog = require('./lib/server_log_queue').serverDbQueue;
 	
 var GattPeripheral = require('./lib/gatt_peripheral');
 
