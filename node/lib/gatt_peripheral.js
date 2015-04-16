@@ -7,6 +7,7 @@ console.log('peripheral using device: ', process.env.BLENO_HCI_DEVICE_ID);
 var util = require('util'),
 	bleno = require('bleno'),
 	Promise = require('bluebird'),
+	events = reqire('events'),
 	slog = require('./server_log_queue').serverDbQueue,
 	clog = require('./server_log_queue').commsDbQueue;
 
@@ -17,7 +18,10 @@ var dbSource = 'gatt_central_peripheral';
 
 var carService;
 
+util.inherits(GattPeripheral, events.EventEmitter);
+
 function GattPeripheral(_name) {
+	events.EventEmitter.call(this);
 	name = _name;
 	carService = new CarService();
 }
@@ -59,8 +63,12 @@ GattPeripheral.prototype.run = function(){
 		});	
 	});
 }
-
-
+		
+bleno.on('disconnect', function(clientAddress){
+	var _this = this;
+	
+	_this.emit('disconnect', clientAddress);
+})
 		
 GattPeripheral.prototype.stop = function(){
 	slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});

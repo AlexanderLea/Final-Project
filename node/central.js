@@ -4,6 +4,7 @@ process.env.BLENO_HCI_DEVICE_ID=1;
 var noble 	= require('noble'),
 	async 	= require('async'),
 	db		= require('./api/whitelist_db'),
+	slog = require('./server_log_queue').serverDbQueue,
 	Promise = require('bluebird');
 	
 var GattObserver = require('./lib/gatt_observer');
@@ -53,4 +54,12 @@ noble.on('stateChange', function(state) {
 gattObserver.on('data-recieved', function(data) {
 	//console.log('recieved (buffer) ', data);	
 	gattPeripheral.broadcastCommand(data);
+});
+
+gattPeripheral.on('disconnect', function(clientAddr){
+	slog.push({
+		source: 'central', 
+		message: clientAddr + ' disconnected', 
+		priority: 'err'
+	});
 });

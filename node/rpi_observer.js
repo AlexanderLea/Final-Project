@@ -17,6 +17,7 @@ var bleno 	= require('bleno'),
 	async 	= require('async'),
 	Promise = require('bluebird'),
 	gpio 	= require('rpi-gpio'),
+	slog 	= require('./lib/server_log_queue').serverDbQueue,	
 	GattPeripheral 	= require('./lib/gatt_peripheral'),
 	GattObserver 	= require('./lib/gatt_observer');
 	
@@ -30,9 +31,7 @@ var tick, indicatorOn;
 
 function gpioCallback(){};
 
-gattObserver.run(['00:1a:7d:da:71:0c'])
-
-/*
+//gattObserver.run(['00:1a:7d:da:71:0c'])
 //1
 var gattPeripheralPromise = gattPeripheral.run()
 		.then(function() {
@@ -60,7 +59,7 @@ var gattPeripheralPromise = gattPeripheral.run()
 			console.log(err)
 		});							
 		
-
+/*
 Promise.all([gattPeripheralPromise]).then(function() {
 			//peripheral has finished, so now run observer
 			//console.log('peripheral has connected - run observer');
@@ -94,4 +93,14 @@ gattObserver.on('data-recieved', function(data) {
 	}
 	
 	console.log('data recieved!: ', data.toString('hex'));
+});
+
+gattPeripheral.on('disconnect', function(clientAddress){
+	slog.push({
+		source: 'rpi observer', 
+		message: 'disconnected', 
+		priority: 'info'
+	});	
+	gattPeripheral.stop();
+	gattObserver.stop();
 });
