@@ -32,7 +32,7 @@ var gattPeripheralPromise = gattPeripheral.run()
 			//3
 			bleno.on('accept', function(clientAddress) {
 				//serverAddr = clientAddress
-				console.log(serverAddr);
+				console.log(clientAddress);
 				
 				return gattObserver.run([clientAddress])
 				
