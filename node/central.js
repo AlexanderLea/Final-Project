@@ -1,56 +1,48 @@
-/**
-* Using https://github.com/sandeepmistry/noble, which using Bluez
-* Based fairly heavily on the demos on the wiki
-*/
 process.env.NOBLE_HCI_DEVICE_ID=0;
 process.env.BLENO_HCI_DEVICE_ID=1;
 
-var noble = require('noble'),
-	async = require('async');
+var noble 	= require('noble'),
+	async 	= require('async'),
+	db		= require('./api/whitelist_db'),
+	Promise = require('bluebird');
 	
-var GattObserver = require('./gatt_central_observer');
-var GattPeripheral = require('./gatt_central_peripheral');
+var GattObserver = require('./lib/gatt_observer');
+var GattPeripheral = require('./lib/gatt_peripheral');
 
 //Instantiate objects
-var gattPeripheral = new GattPeripheral();
+var gattPeripheral = new GattPeripheral('CAR_Central');
 var gattObserver = new GattObserver();
 
-var peripheralRunning = false, observerRunning = false;
+var whitelistAll = Promise.promisify(db.whitelistAll)
 
 //if Bluetooth is on, let's go
 noble.on('stateChange', function(state) {
-	if (state === 'poweredOn') {		
-		async.parallel([
-			//start Gatt Observer
-			function(observerCallback){
-				gattObserver.run(function(err){
-					if(err){
-						observerCallback(err);
-					} else {
-						observerRunning = true;
-						observerCallback();
-					}
-				});
-			},
-			//start Gatt Peripheral
-			function(peripheralCallback){
-				gattPeripheral.run(function(err){
-					if(err){
-						peripheralCallback(err);
-					} else {
-						observerRunning = true;
-						peripheralCallback();
-					}
-				});
-			}
-		], function(err){
-			if(err){
-				console.log(err);
-			} else {
-				console.log('both running!');
-			}
-		});
-		
+	if (state === 'poweredOn') {	
+		//TODO: need to run API server here too!
+		var gattObserverPromise = whitelistAll()
+			.then(function(rows) {
+				return rows.map(function(row){
+					return row.mac_addr.toLowerCase()
+				})
+			})
+			.then(function(macAddresses) {
+				return gattObserver.run(macAddresses)
+			})
+			.catch(function(err) {
+				console.log(err)
+			});
+
+		var gattPeripheralPromise = gattPeripheral.run()
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		Promise.all([gattObserverPromise, gattPeripheralPromise]).then(function() {
+			console.log("all things done");
+		})
+		.catch(function(err) {
+			console.log(err)
+		})		
 	}
 	else { //don't scan		
 		gattPeripheral.stop();

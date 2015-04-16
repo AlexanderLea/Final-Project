@@ -22,10 +22,10 @@ var ErrorCharacteristic = function() {
 			
 			//if subscribed to, poll cmd every half second, and send update if has changed.
 			var poll = setInterval(function() { 
-				if(cmd){
+				if(err){
 					
-					updateValueCallback(cmd);					
-					cmd = null;
+					updateValueCallback(err);					
+					err = null;
 				}
 			}, 500);						
 		}, 
