@@ -42,6 +42,7 @@ return new Promise(function(resolve, reject){
 		if(whitelist.indexOf(peripheral.address) > -1){
 			//connect
 			peripheral.connect(function(err) {
+				console.log('connecting to ', peripheral.address)
 				//log in database
 				slog.push({
 					source: dbSource, 
