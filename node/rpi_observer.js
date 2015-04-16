@@ -27,6 +27,7 @@ var gattObserver = new GattObserver();
 
 //setup GPIO on pin 26
 gpio.setup(26, gpio.DIR_OUT, gpioCallback)
+gpio.setup(24, gpio.DIR_OUT, gpioCallback)
 var tick, indicatorOn;
 
 function gpioCallback(){};
