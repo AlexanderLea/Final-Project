@@ -13,21 +13,22 @@
 process.env.NOBLE_HCI_DEVICE_ID=0;
 process.env.BLENO_HCI_DEVICE_ID=1;
 
-var bleno = require('bleno'),
-	async = require('async'),
+var bleno 	= require('bleno'),
+	async 	= require('async'),
 	Promise = require('bluebird'),
-	GattPeripheral = require('./lib/gatt_peripheral'),
-	GattObserver = require('./lib/gatt_observer');
+	gpio 	= require('rpi-gpio'),
+	GattPeripheral 	= require('./lib/gatt_peripheral'),
+	GattObserver 	= require('./lib/gatt_observer');
 	
 //initialise Observer and Peripheral
 var gattPeripheral = new GattPeripheral('RPI_Observer');
 var gattObserver = new GattObserver();
-//5C:F3:70:60:DC:38
 
-var serverAddr;
+//setup GPIO on pin 26
+gpio.setup(26, gpio.DIR_OUT, gpioCallback)
+var tick, indicatorOn;
 
-//console.log('connecting to 00:1a:7d:da:71:0C');
-//gattObserver.run(['00:1a:7d:da:71:0c']);
+function gpioCallback(){};
 
 //1
 var gattPeripheralPromise = gattPeripheral.run()
@@ -69,5 +70,25 @@ Promise.all([gattPeripheralPromise]).then(function() {
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
+	switch(data.toString('hex')){
+		case '2220002032000000':
+			console.log('indicator on');
+			tick = setInterval(function(){
+				gpio.write(26, indicatorOn, function(err){
+				  if (err) throw err;
+				  indicatorOn = !on;   
+			  	});
+			  }, 500);
+			break;
+		case '2a20002032000000':
+			console.log('indicator off');
+			clearInterval(tick);
+			gpio.write(26, indicatorOn, function(err){
+				  if (err) throw err;
+				  indicatorOn = !on ;     
+			  	});
+			break;
+	}
+	
 	console.log('data recieved!: ', data.toString('hex'));
 });
