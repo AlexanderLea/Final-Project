@@ -24,7 +24,7 @@ CarService.prototype.sendCommand = function(cmd){
 	carCharacteristic.updateCharacteristicValue(cmd);
 }
 
-CarService.prototype.reportError = function(_err){
+CarService.prototype.registerError = function(_err){
 	errCharacteristic.updateCharacteristicValue(_err);
 }
 
