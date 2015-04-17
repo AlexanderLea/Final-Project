@@ -1,6 +1,7 @@
 var util = require('util'),
 	bleno = require('bleno'),
-	slog = require('./server_log_queue').serverDbQueue;
+	slog = require('./server_log_queue').serverDbQueue,
+	Descriptor = bleno.Descriptor;
 
 var cmd;
 var poll;
@@ -10,7 +11,7 @@ var CarCharacteristic = function() {
 		uuid: '1817',
 		properties: ['read', 'notify'],
 		secure: ['read', 'notify'],
-		descriptors: [ uuid: '1817', value: 'Car characteristic'],
+		descriptors: [ new Descriptor({uuid: '1817', value: 'Car characteristic'}) ],
 		//Read event
 		onReadRequest: function(offset, callback) {
      		if(cmd){
