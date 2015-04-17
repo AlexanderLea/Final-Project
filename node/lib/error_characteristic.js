@@ -9,6 +9,7 @@ var ErrorCharacteristic = function() {
 	bleno.Characteristic.call(this, {
 		uuid: '1818',
 		properties: ['read', 'notify'],
+		secure: ['read', 'notify'],
 		//Read event
 		onReadRequest: function(offset, callback) {
      		if(cmd){

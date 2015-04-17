@@ -9,6 +9,7 @@ var CarCharacteristic = function() {
 	bleno.Characteristic.call(this, {
 		uuid: '1817',
 		properties: ['read', 'notify'],
+		secure: ['read', 'notify'],
 		//Read event
 		onReadRequest: function(offset, callback) {
      		if(cmd){
