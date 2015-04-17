@@ -105,7 +105,7 @@ gattObserver.on('data-recieved', function(data) {
 });
 
 var randomErrGenerator = setInterval(function(){
-	gattPeripheral.reportError(1234);
+	gattPeripheral.registerError(1234);
 }, Math.random()*100000)
 
 gattPeripheral.on('disconnect', function(clientAddress){
