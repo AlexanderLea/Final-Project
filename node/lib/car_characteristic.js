@@ -10,7 +10,7 @@ var CarCharacteristic = function() {
 	bleno.Characteristic.call(this, {
 		uuid: '1817',
 		properties: ['read', 'notify'],
-		secure: ['read', 'notify'],
+		//secure: ['read', 'notify'],
 		descriptors: [ new Descriptor({uuid: '1817', value: 'Car characteristic'}) ],
 		//Read event
 		onReadRequest: function(offset, callback) {

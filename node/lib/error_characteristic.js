@@ -10,7 +10,7 @@ var ErrorCharacteristic = function() {
 	bleno.Characteristic.call(this, {
 		uuid: '1818',
 		properties: ['read', 'notify'],
-		secure: ['read', 'notify'],
+		//secure: ['read', 'notify'],
 		descriptors: [ new Descriptor({uuid: '1818', value: 'Error characteristic'})],
 		//Read event
 		onReadRequest: function(offset, callback) {
