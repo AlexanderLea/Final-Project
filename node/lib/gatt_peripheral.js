@@ -67,7 +67,7 @@ GattPeripheral.prototype.run = function(){
 bleno.on('disconnect', function(clientAddress){
 	var _this = this;
 	
-	_this.emit('disconnect', clientAddress);
+	_this.once('disconnect', clientAddress);
 })
 		
 GattPeripheral.prototype.stop = function(){

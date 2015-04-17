@@ -34,6 +34,19 @@ function gpioCallback(){};
 
 //gattObserver.run(['00:1a:7d:da:71:0c'])
 //1
+gattPeripheral.run();
+
+//3
+bleno.on('accept', function(clientAddress) {
+	//serverAddr = clientAddress
+	console.log('Connected to ' + clientAddress + ' as peripheral sender');
+	
+//connect to 5C:F3:70:60:DC:38
+	gattObserver.run(['00:1a:7d:da:71:0c'])
+	
+});
+
+/*
 var gattPeripheralPromise = gattPeripheral.run()
 		.then(function() {
 			
@@ -59,7 +72,7 @@ var gattPeripheralPromise = gattPeripheral.run()
 		.catch(function(err) {
 			console.log(err)
 		});							
-		
+		*/
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
