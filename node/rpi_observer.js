@@ -33,20 +33,7 @@ var tick, indicatorOn;
 function gpioCallback(){};
 
 //gattObserver.run(['00:1a:7d:da:71:0c'])
-//1
-gattPeripheral.run();
 
-//3
-bleno.on('accept', function(clientAddress) {
-	//serverAddr = clientAddress
-	console.log('Connected to ' + clientAddress + ' as peripheral sender');
-	
-//connect to 5C:F3:70:60:DC:38
-	gattObserver.run(['00:1a:7d:da:71:0c'])
-	
-});
-
-/*
 var gattPeripheralPromise = gattPeripheral.run()
 		.then(function() {
 			
@@ -55,30 +42,23 @@ var gattPeripheralPromise = gattPeripheral.run()
 				//serverAddr = clientAddress
 				console.log('Connected to ' + clientAddress + ' as peripheral sender');
 				
-//connect to 5C:F3:70:60:DC:38
-				return gattObserver.run(['00:1a:7d:da:71:0c'])
-				
+				return gattObserver.run(['00:1a:7d:da:71:0c']);				
 			});
 
 		},
 		function(err){
 			console.log(err);
 		})
-		//.then(function(clientAddress) {
-		//	console.log('running observer');
-			//3.1 & 3.2
-			
-		//})
 		.catch(function(err) {
 			console.log(err)
 		});							
-		*/
+		
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
 	switch(data.toString('hex')){
 		/* Indicator on */
-		case '242000203dbd0008':
+		case '242000203fbd0008':
 			console.log('indicator on');
 			tick = setInterval(function(){
 				indicatorOn = !indicatorOn;   
@@ -88,7 +68,7 @@ gattObserver.on('data-recieved', function(data) {
 			  }, 500);
 			break;
 		/* Indicator off */			
-		case '2c2000203dbd0008':
+		case '2c2000203fbd0008':
 			console.log('indicator off');
 			clearInterval(tick);
 			gpio.write(26, false, function(err){
@@ -97,7 +77,7 @@ gattObserver.on('data-recieved', function(data) {
 			  	});
 			break;
 		/* Brake on */
-		case '342000203dbd0008':
+		case '342000203fbd0008':
 			console.log('brake on');
 			gpio.write(24, true, function(err){
 				  if (err) throw err;
@@ -105,7 +85,7 @@ gattObserver.on('data-recieved', function(data) {
 			  	});
 			break;
 		/* Brake off */			
-		case '3c2000203dbd0008':
+		case '3c2000203fbd0008':
 			console.log('brake off');
 			gpio.write(24, false, function(err){
 				  if (err) throw err;
@@ -129,5 +109,4 @@ gattPeripheral.on('disconnect', function(clientAddress){
 		priority: 'info'
 	});	
 	gattPeripheral.stop();
-	gattObserver.stop();
 });
