@@ -36,6 +36,7 @@ GattPeripheral.prototype.run = function(){
 				//start advertising!
 				bleno.startAdvertising(name, [carService.uuid], function(err) {
 					if (err) {
+						bleno.stopAdvertising();
 						slog.push({source: dbSource, message: err, priority: 'err'});
 						reject(err);
 					} 
@@ -43,8 +44,8 @@ GattPeripheral.prototype.run = function(){
 			}
 			else {
 				bleno.stopAdvertising();
-				slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
-				reject('Bleno is off');
+				slog.push({source: dbSource, message: name + ': bleno poweredOff - stop advertising', priority: 'info'});
+				reject('Bleno is poweredoff');
 			}
 		});		
 		

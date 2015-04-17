@@ -26,7 +26,7 @@ function GattObserver() {
 util.inherits(GattObserver, events.EventEmitter);
 
 GattObserver.prototype.run = function(whitelist, runCallback){
-
+	var devCount = 0;
 	var _this = this;
 	
 	noble.startScanning();
@@ -36,73 +36,77 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 		priority: 'info'
 	});	
 
-return new Promise(function(resolve, reject){
-	noble.on('discover', function(peripheral) {
-		//if MAC is in whitelist
-		if(whitelist.indexOf(peripheral.address) > -1){
-			//connect
-			peripheral.connect(function(err) {
-				//console.log('connecting to ', peripheral.address)
-				//log in database
+	return new Promise(function(resolve, reject){
+		var timer = setTimeout(function(){
+			if(devCount === whitelist.length){
+				clearTimeout(timer)
+				resolve();
+			} else {						
+				noble.stopScanning();				
 				slog.push({
 					source: dbSource, 
-					message: peripheral.address + ': connected', 
-					priority: 'info'
+					message: 'connection timeout - not all whitelist devices connected', 
+					priority: 'err'
 				});
+				reject('Timeout - not all whitelist devices discovered');
+			}
+		}, 10000)
+	
+		noble.on('discover', function(peripheral) {
+			//if MAC is in whitelist
+			if(whitelist.indexOf(peripheral.address) > -1){
+				//connect
+				peripheral.connect(function(err) {
+					devCount++;					
+
+					//console.log('connecting to ', peripheral.address)
+					//log in database
+					slog.push({
+						source: dbSource, 
+						message: peripheral.address + ': connected', 
+						priority: 'info'
+					});
+
+					peripheral.discoverSomeServicesAndCharacteristics(
+						[carServiceUuid], [carCharacteristicUuid, errorCharacteristicUuid], 
+						function(err, services, characteristics){
 				
-				peripheral.discoverSomeServicesAndCharacteristics(
-					[carServiceUuid], [carCharacteristicUuid, errorCharacteristicUuid], 
-					function(err, services, characteristics){
-				
-					characteristics.forEach(function(characteristic){
+						characteristics.forEach(function(characteristic){
 						
-						//read characteristic value
-						characteristic.on('data', function(data, isNotification) { 
-							//emit data-recieved event
-	 						_this.emit('data-recieved', data);
-	 						
-							//TODO: Distinguish between errors and normal messages
-	 						clog.push({
-	 							direction: 'IN', 
-	 							from: peripheral.address,
-	 							message: data.toString('hex'),
-	 							logType: '1'
-							});							
-						});
+							//read characteristic value
+							characteristic.on('data', function(data, isNotification) { 
+								//emit data-recieved event
+		 						_this.emit('data-recieved', data);
+		 						
+								//TODO: Distinguish between errors and normal messages
+		 						clog.push({
+		 							direction: 'IN', 
+		 							from: peripheral.address,
+		 							message: data.toString('hex'),
+		 							logType: '1'
+								});							
+							});
 
-						//enable notifications so we get updates
-						characteristic.notify(true, function(error) {
-							//log in database
-							slog.push({
-								source: dbSource,
-								message: peripheral.address 
-									+ ', characteristic: ' 
-									+ characteristic.uuid
-									+ ': listening for notifications', 
-								priority: 'info'
-							});			
-							//callback
-							resolve();						
-						});						
-					})									
-				});//perhaps reject something?
-			});
-					
-		}
-		else {
-			//console.log('not connecting to: ', peripheral.address);
-			resolve();
-		}
-	});
-});
-
-	
-
-	
-}
-
-GattObserver.prototype.stop = function(){
-	console.log("this does nothing. TODO");	
+							//enable notifications so we get updates
+							characteristic.notify(true, function(error) {
+								//log in database
+								slog.push({
+									source: dbSource,
+									message: peripheral.address 
+										+ ', characteristic: ' 
+										+ characteristic.uuid
+										+ ': listening for notifications', 
+									priority: 'info'
+								});			
+								//callback
+								//resolve();						
+							});						
+						})									
+					});//perhaps reject something?
+				});					
+			}
+		});
+	});					
 }
 
 module.exports = GattObserver;

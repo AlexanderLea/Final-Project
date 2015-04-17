@@ -17,8 +17,8 @@ var gattObserver = new GattObserver();
 var whitelistAll = Promise.promisify(db.whitelistAll)
 
 //if Bluetooth is on, let's go
-noble.on('stateChange', function(state) {
-	if (state === 'poweredOn') {	
+//noble.on('stateChange', function(state) {
+//	if (state === 'poweredOn') {	
 		//TODO: need to run API server here too!
 		var gattObserverPromise = whitelistAll()
 			.then(function(rows) {
@@ -30,26 +30,19 @@ noble.on('stateChange', function(state) {
 				return gattObserver.run(macAddresses)
 			})
 			.catch(function(err) {
+				gattPeriperal.stop();
 				console.log(err)
 			});
 
 		var gattPeripheralPromise = gattPeripheral.run()
 			.catch(function(err) {
 				console.log(err)
-			})
-
-		Promise.all([gattObserverPromise, gattPeripheralPromise]).then(function() {
-			console.log("all things done");
-		})
-		.catch(function(err) {
-			console.log(err)
-		})		
-	}
-	else { //don't scan		
-		gattPeripheral.stop();
-		gattObserver.stop();
-	}
-});
+			})		
+	//}
+	//else { //don't scan		
+	//	gattPeripheral.stop();
+	//}
+//});
 
 gattObserver.on('data-recieved', function(data) {
 	//console.log('recieved (buffer) ', data);	
@@ -57,9 +50,10 @@ gattObserver.on('data-recieved', function(data) {
 });
 
 gattPeripheral.on('disconnect', function(clientAddr){
-	slog.push({
-		source: 'central', 
-		message: clientAddr + ' disconnected', 
-		priority: 'err'
-	});
+	console.log('disconnected');
+	//slog.push({
+	//	source: 'central', 
+	//	message: clientAddr + ' disconnected', 
+	//	priority: 'err'
+	//});
 });
