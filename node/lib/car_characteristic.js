@@ -10,6 +10,7 @@ var CarCharacteristic = function() {
 		uuid: '1817',
 		properties: ['read', 'notify'],
 		secure: ['read', 'notify'],
+		descriptors: [ uuid: '1817', value: 'Car characteristic'],
 		//Read event
 		onReadRequest: function(offset, callback) {
      		if(cmd){

@@ -10,6 +10,7 @@ var ErrorCharacteristic = function() {
 		uuid: '1818',
 		properties: ['read', 'notify'],
 		secure: ['read', 'notify'],
+		descriptors: [ uuid: '1818', value: 'Error characteristic'],
 		//Read event
 		onReadRequest: function(offset, callback) {
      		if(cmd){

@@ -85,4 +85,15 @@ GattPeripheral.prototype.broadcastCommand = function(_cmd){
 	});
 }
 
+GattPeripheral.prototype.registerError = function(err){
+	carService.registerError(err);
+	clog.push({
+		direction: 'OUT', 
+		from: '',
+		message: err,
+		logType: '2'
+	});
+}
+
+
 module.exports = GattPeripheral;

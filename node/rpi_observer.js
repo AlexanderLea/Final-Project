@@ -60,16 +60,6 @@ var gattPeripheralPromise = gattPeripheral.run()
 			console.log(err)
 		});							
 		
-/*
-Promise.all([gattPeripheralPromise]).then(function() {
-			//peripheral has finished, so now run observer
-			//console.log('peripheral has connected - run observer');
-			//gattObserver.run([serverAddr]);
-		})
-		.catch(function(err) {
-			console.log(err)
-		})	
-*/
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
@@ -113,6 +103,10 @@ gattObserver.on('data-recieved', function(data) {
 	
 	//console.log('data recieved!: ', data.toString('hex'));
 });
+
+var randomErrGenerator = setInterval(function(){
+	gattPeripheral.reportError(1234);
+}, Math.random()*100000)
 
 gattPeripheral.on('disconnect', function(clientAddress){
 	slog.push({
