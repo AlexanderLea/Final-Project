@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script>
+$(function(){
+        $.getJSON("http://localhost:3000/api/whitelist", function(result){
+            $.each(result, function(i, row){
+            //"message_direction":"direction","message_from":"from","message_contents":"contents","comms_log_type":1
+            	var tableRow = $("<tr><td>" + row.id + "</td><td>"
+            		+ row.mac_addr+"</td><td> "
+            		+ row.friendly_name + "</td><td> "
+            		+ row.description + "</td><td>"
+            		+ row.ble_role + "</td></tr>");
+                
+                $("#table").append(tableRow);
+            });
+        });
+});
+</script>
+</head>
+<body>
+<h1>Device Whitelist</h1>
+
+<table id="table" class="table">
+	<tr>
+		<th>ID</th>
+		<th>MAC Address</th>	
+		<th>Friendly Name</th>			
+		<th>Description</th>
+		<th>BLE Role</th>										
+	</tr>	
+</table>
+</body>
+</html>
+

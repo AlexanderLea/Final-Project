@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script>
+$(function(){
+        $.getJSON("http://localhost:3000/api/serverlog", function(result){
+            $.each(result, function(i, row){
+            
+            	var tableRow = $("<tr><td>" + row.log_id + "</td><td>"
+            		+ row.timestamp+"</td><td> "
+            		+ row.log_source + "</td><td> "
+            		+ row.log_message + "</td><td>" 
+            		+ row.priority + "</td></tr>");
+                
+                $("#table").append(tableRow);
+            });
+        });
+});
+</script>
+</head>
+<body>
+<h1>Server Log</h1>
+
+<table id="table" class="table">
+	<tr>
+		<th>ID</th>
+		<th>Timestamp</th>	
+		<th>Source</th>			
+		<th>Message</th>
+		<th>Priority</th>								
+	</tr>	
+</table>
+</body>
+</html>
+
