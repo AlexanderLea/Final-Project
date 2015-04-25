@@ -30,7 +30,7 @@ var whitelistAll = Promise.promisify(db.whitelistAll)
 				return gattObserver.run(macAddresses)
 			})
 			.catch(function(err) {
-				gattPeriperal.stop();
+				//gattPeriperal.stop();
 				console.log(err)
 			});
 
@@ -49,6 +49,7 @@ gattObserver.on('data-recieved', function(data) {
 	gattPeripheral.broadcastCommand(data);
 });
 
+/*
 gattPeripheral.on('disconnect', function(clientAddr){
 	console.log('disconnected');
 	//slog.push({
@@ -56,4 +57,4 @@ gattPeripheral.on('disconnect', function(clientAddr){
 	//	message: clientAddr + ' disconnected', 
 	//	priority: 'err'
 	//});
-});
+});*/
