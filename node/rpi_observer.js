@@ -98,9 +98,9 @@ gattObserver.on('data-recieved', function(data) {
 });
 
 //TODO: Random time errors
-/*var randomErrGenerator = setInterval(function(){
-	gattPeripheral.registerError();
-}, Math.random()*100000)*/
+var randomErrGenerator = setInterval(function(){
+	gattPeripheral.registerError('1234');
+}, Math.random()*100000)
 
 gattPeripheral.on('disconnect', function(clientAddress){
 	slog.push({

@@ -65,11 +65,11 @@ GattPeripheral.prototype.run = function(){
 	});
 }
 		
-bleno.on('disconnect', function(clientAddress){
+/*bleno.on('disconnect', function(clientAddress){
 	var _this = this;
 	
-	_this.once('disconnect', clientAddress);
-})
+	_this.emit('disconnect', clientAddress);
+})*/
 		
 GattPeripheral.prototype.stop = function(){
 	slog.push({source: dbSource, message: name + ': stop advertising', priority: 'info'});
