@@ -6,8 +6,7 @@ var noble = require('noble'),
 	async = require('async'),
 	Promise = require('bluebird'),
 	slog = require('./server_log_queue').serverDbQueue,
-	clog = require('./server_log_queue').commsDbQueue,
-	db = require('../api/whitelist_db');
+	clog = require('./server_log_queue').commsDbQueue;
 
 /** UUID declaration */
 var carServiceUuid		= '2a67';
