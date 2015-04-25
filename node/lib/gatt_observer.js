@@ -66,7 +66,13 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 						message: peripheral.address + ': connected', 
 						priority: 'info'
 					});
-
+					peripheral.on('disconnect', function(){
+						slog.push({
+							source: dbSource, 
+							message: peripheral.address + ': disconnected', 
+							priority: 'err'
+						});
+					});
 					peripheral.discoverSomeServicesAndCharacteristics(
 						[carServiceUuid], [carCharacteristicUuid, errorCharacteristicUuid], 
 						function(err, services, characteristics){
@@ -109,7 +115,7 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 								});			
 								//callback
 								//resolve();						
-							});						
+							});					
 						})									
 					});//perhaps reject something?
 				});					
