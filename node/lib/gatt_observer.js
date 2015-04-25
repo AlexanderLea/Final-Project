@@ -75,16 +75,25 @@ GattObserver.prototype.run = function(whitelist, runCallback){
 						
 							//read characteristic value
 							characteristic.on('data', function(data, isNotification) { 
-								//emit data-recieved event
-		 						_this.emit('data-recieved', data);
-		 						
-								//TODO: Distinguish between errors and normal messages
-		 						clog.push({
-		 							direction: 'IN', 
-		 							from: peripheral.address,
-		 							message: data.toString('hex'),
-		 							logType: '1'
-								});							
+								
+		 						if(characteristic.uuid == errorCharacteristicUuid){
+		 							clog.push({
+			 							direction: 'IN', 
+			 							from: peripheral.address,
+			 							message: data.toString('hex'),
+			 							logType: '2'
+									});
+		 						} else {
+			 						//emit data-recieved event
+			 						_this.emit('data-recieved', data);
+			 						
+			 						clog.push({
+			 							direction: 'IN', 
+			 							from: peripheral.address,
+			 							message: data.toString('hex'),
+			 							logType: '1'
+									});		
+								}					
 							});
 
 							//enable notifications so we get updates
