@@ -1,22 +1,21 @@
-var //http = require('http'),
-	//url = require('url'),
-	logDb = require('./log_db'),
+var logDb = require('./log_db'),
 	whitelistDb = require('./whitelist_db')
 	express = require('express'),
 	bodyParser = require('body-parser');
 	
 var restapi = express();
 restapi.use(bodyParser.json());
+restapi.use('/', express.static(__dirname + '/public'));
 
 //Whitelist
-restapi.get('/whitelist', function(req, res){
+restapi.get('/api/whitelist', function(req, res){
 	data = whitelistDb.whitelistAll(function(err, data){
 		res.json(data);
 	});
-	console.log('get all whitelist');
+	//console.log('get all whitelist');
 });
 
-restapi.post('/whitelist', function(req, res){
+restapi.post('/api/whitelist', function(req, res){
 	whitelistDb.whitelistAdd(req.body.mac_addr, req.body.friendly_name, req.body.description, req.body.ble_role);
 	
 	console.log('inserted new whitelist device');
@@ -24,21 +23,21 @@ restapi.post('/whitelist', function(req, res){
 });
 
 //Server log
-restapi.get('/serverlog', function(req, res){
+restapi.get('/api/serverlog', function(req, res){
 	data = logDb.serverLogAll(function(err, data){
 		res.json(data);
-	});
-		console.log('get all server log');
+		//onsole.log('get all server log.');// Data: ', data);
+	});		
 });
 
 //Communication log
-restapi.get('/communicationlog', function(req, res){
+restapi.get('/api/communicationlog', function(req, res){
 	data = logDb.commsLogAll(function(err, data){
 		res.json(data);
 	});
-		console.log('get all comms log');
+		//console.log('get all comms log');
 });
 
 restapi.listen(3000);
 
-console.log('server running on http://localhost:3000/xyz')
+console.log('server running on http://localhost:3000/')
