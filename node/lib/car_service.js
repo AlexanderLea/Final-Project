@@ -7,13 +7,19 @@ var BlenoPrimaryService = bleno.PrimaryService;
 var carCharacteristic = new CarCharacteristic();
 var errCharacteristic = new ErrCharacteristic();
 
-function CarService() {
+function CarService(_isCentral) {
+	console.log('is central ', _isCentral);
+	var chars;
+	
+	if(_isCentral){
+		chars = [carCharacteristic];
+	} else {
+		chars = [carCharacteristic, errCharacteristic];
+	}
+	
     CarService.super_.call(this, {
         uuid: '2a67',
-        characteristics: [
-            carCharacteristic,
-            errCharacteristic
-        ]
+        characteristics: chars
     });   
 }
 

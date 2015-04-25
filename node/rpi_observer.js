@@ -22,7 +22,7 @@ var bleno 	= require('bleno'),
 	GattObserver 	= require('./lib/gatt_observer');
 	
 //initialise Observer and Peripheral
-var gattPeripheral = new GattPeripheral('RPI_Observer');
+var gattPeripheral = new GattPeripheral('RPI_Observer', false);
 var gattObserver = new GattObserver();
 
 //setup GPIO on pin 26
@@ -99,7 +99,7 @@ gattObserver.on('data-recieved', function(data) {
 
 //TODO: Random time errors
 var randomErrGenerator = setInterval(function(){
-	gattPeripheral.registerError('1234');
+	gattPeripheral.registerError('34');
 }, Math.random()*100000)
 
 gattPeripheral.on('disconnect', function(clientAddress){

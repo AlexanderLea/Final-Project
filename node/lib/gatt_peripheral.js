@@ -20,10 +20,10 @@ var carService;
 
 util.inherits(GattPeripheral, events.EventEmitter);
 
-function GattPeripheral(_name) {
+function GattPeripheral(_name, _isCentral) {
 	events.EventEmitter.call(this);
 	name = _name;
-	carService = new CarService();
+	carService = new CarService(_isCentral);
 }
 
 GattPeripheral.prototype.run = function(){

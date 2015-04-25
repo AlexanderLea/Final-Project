@@ -7,7 +7,7 @@ var bleno = require('bleno'),
 	
 var GattPeripheral = require('./lib/gatt_peripheral');
 
-var gattPeripheral = new GattPeripheral();
+var gattPeripheral = new GattPeripheral('TEST_PERIPHERAL', true);
 
 //if Bluetooth is on, let's go
 	
@@ -22,6 +22,5 @@ var randomErrGenerator = setInterval(function(){
 	i++;
 	gattPeripheral.registerError(i.toString());
 }, Math.random()*100000)			
-
 
 

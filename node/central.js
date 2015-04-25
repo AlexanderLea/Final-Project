@@ -11,7 +11,7 @@ var GattObserver = require('./lib/gatt_observer');
 var GattPeripheral = require('./lib/gatt_peripheral');
 
 //Instantiate objects
-var gattPeripheral = new GattPeripheral('CAR_Central');
+var gattPeripheral = new GattPeripheral('CAR_Central', true);
 var gattObserver = new GattObserver();
 
 var whitelistAll = Promise.promisify(db.whitelistAll)
