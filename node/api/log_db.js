@@ -1,7 +1,7 @@
 var sqlite3 = require('sqlite3').verbose(),
 	async = require('async');  
 	
-var db = new sqlite3.Database('../../log.db');
+var db = new sqlite3.Database('./../log.db');
 
 module.exports = {
 	/**
