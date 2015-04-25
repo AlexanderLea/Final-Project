@@ -1,7 +1,7 @@
 var sqlite3 = require('sqlite3').verbose(),
 	async = require('async');  
 	
-var db = new sqlite3.Database('../log.db');
+var db = new sqlite3.Database('../../log.db');
 
 module.exports = {
 	/**
@@ -22,7 +22,7 @@ module.exports = {
 	
 	serverLogAll: function(getAllServerLogCallback){
 		db.serialize(function(){
-			db.all('SELECT * FROM server_log', function(err, rows){
+			db.all('SELECT * FROM server_log ORDER BY log_id DESC', function(err, rows){
 				if(err) {
 					getAllServerLogCallback(err, null);
 					return;
@@ -35,7 +35,7 @@ module.exports = {
 	
 	commsLogAll: function(getAllCommsLogCallback){
 		db.serialize(function(){
-			db.all('SELECT * FROM communication_log', function(err, rows){
+			db.all('SELECT * FROM communication_log ORDER BY log_id DESC', function(err, rows){
 				if(err) {
 					getAllCommsLogCallback(err, null);
 					return;
