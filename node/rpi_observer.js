@@ -32,8 +32,8 @@ var tick, indicatorOn;
 
 function gpioCallback(){};
 
-//gattObserver.run(['00:1a:7d:da:71:0c'])
-
+gattObserver.run(['00:1a:7d:da:71:0c'])
+/*
 var gattPeripheralPromise = gattPeripheral.run()
 		.then(function() {
 			
@@ -52,13 +52,13 @@ var gattPeripheralPromise = gattPeripheral.run()
 		.catch(function(err) {
 			console.log(err)
 		});							
-		
+		*/
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
 	switch(data.toString('hex')){
 		/* Indicator on */
-		case '242000203fbd0008':
+		case '242000201000efdf':
 			console.log('indicator on');
 			tick = setInterval(function(){
 				indicatorOn = !indicatorOn;   
@@ -68,7 +68,7 @@ gattObserver.on('data-recieved', function(data) {
 			  }, 500);
 			break;
 		/* Indicator off */			
-		case '2c2000203fbd0008':
+		case '2c2000201000efdf':
 			console.log('indicator off');
 			clearInterval(tick);
 			gpio.write(26, false, function(err){
@@ -77,7 +77,7 @@ gattObserver.on('data-recieved', function(data) {
 			  	});
 			break;
 		/* Brake on */
-		case '342000203fbd0008':
+		case '342000201000efdf':
 			console.log('brake on');
 			gpio.write(24, true, function(err){
 				  if (err) throw err;
@@ -85,7 +85,7 @@ gattObserver.on('data-recieved', function(data) {
 			  	});
 			break;
 		/* Brake off */			
-		case '3c2000203fbd0008':
+		case '342000201000efdf':
 			console.log('brake off');
 			gpio.write(24, false, function(err){
 				  if (err) throw err;
@@ -101,7 +101,7 @@ gattObserver.on('data-recieved', function(data) {
 var randomErrGenerator = setInterval(function(){
 	gattPeripheral.registerError('34');
 }, Math.random()*100000)
-
+/*
 gattPeripheral.on('disconnect', function(clientAddress){
 	slog.push({
 		source: 'rpi observer', 
@@ -109,4 +109,4 @@ gattPeripheral.on('disconnect', function(clientAddress){
 		priority: 'info'
 	});	
 	gattPeripheral.stop();
-});
+});*/
