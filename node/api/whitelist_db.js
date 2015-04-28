@@ -1,7 +1,12 @@
+/***
+* Module exposing a number of methods to deal with adding/accessing data from
+* the devices.db SQLite database
+*/
+
 var sqlite3 = require('sqlite3').verbose(),
-	async = require('async');  
+	async	= require('async');
 	
-var db = new sqlite3.Database('./../devices.db');
+var db = new sqlite3.Database('./../../devices.db');
 
 module.exports = {
 	/**
