@@ -1,3 +1,7 @@
+/***
+* Module exposing a number of queues, to allow asynchronous updation of the logging databases
+*/
+
 var	async = require('async'),
 	db = require('./../api/log_db')
 

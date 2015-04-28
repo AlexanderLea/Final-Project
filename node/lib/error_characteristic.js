@@ -1,3 +1,7 @@
+/***
+* Class object module for the ErrorCharacteristic, which allows errors to be reported
+*/
+
 var util = require('util'),
 	bleno = require('bleno'),
 	slog = require('./server_log_queue').serverDbQueue,

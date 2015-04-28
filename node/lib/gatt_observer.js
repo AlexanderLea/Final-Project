@@ -1,3 +1,11 @@
+/***
+* Class object module to coordinate the running of a GATT observer role. 
+* Listens to both the error and car characteristics of whatever device is passed
+* as in the whitelist.
+*
+* Emits an event when data is received
+*/
+
 console.log('observer using device: ', process.env.NOBLE_HCI_DEVICE_ID);
 
 var noble = require('noble'),

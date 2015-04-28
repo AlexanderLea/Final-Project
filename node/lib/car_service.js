@@ -1,3 +1,8 @@
+/***
+* Class object module for the CarService - holds the car and error
+* characteristics and coordinates their updation
+*/
+
 var util = require('util'),
 	bleno = require('bleno'),
 	CarCharacteristic = require('./car_characteristic');
@@ -11,6 +16,7 @@ function CarService(_isCentral) {
 	console.log('is central ', _isCentral);
 	var chars;
 	
+	//determine which characteristics to advertise/include
 	if(_isCentral){
 		chars = [carCharacteristic];
 	} else {

@@ -1,3 +1,8 @@
+/***
+* Class object module for the CarCharacteristic, which carries the commands 
+* central to the system
+*/
+
 var util = require('util'),
 	bleno = require('bleno'),
 	slog = require('./server_log_queue').serverDbQueue,

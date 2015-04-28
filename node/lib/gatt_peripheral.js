@@ -1,5 +1,6 @@
-/**
-* Using https://github.com/sandeepmistry/bleno
+/***
+* Class object module running as GATT peripheral, coordinating the creation of 
+* the services and their running thereafter
 */
 
 console.log('peripheral using device: ', process.env.BLENO_HCI_DEVICE_ID);
