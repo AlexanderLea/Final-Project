@@ -1,4 +1,6 @@
 /**
+* Runs on raspberry pi, as consumer of car service, and advertiser of error service
+*
 * 1 - advertise service
 * 2 - wait for connection
 * 3 - on connection
@@ -32,8 +34,8 @@ var tick, indicatorOn;
 
 function gpioCallback(){};
 
-gattObserver.run(['00:1a:7d:da:71:0c'])
-/*
+//gattObserver.run(['00:1a:7d:da:71:0c'])
+
 var gattPeripheralPromise = gattPeripheral.run()
 		.then(function() {
 			
@@ -52,7 +54,7 @@ var gattPeripheralPromise = gattPeripheral.run()
 		.catch(function(err) {
 			console.log(err)
 		});							
-		*/
+		
 //3.2.1
 gattObserver.on('data-recieved', function(data) {
 	//3.2.1.1
@@ -101,6 +103,7 @@ gattObserver.on('data-recieved', function(data) {
 var randomErrGenerator = setInterval(function(){
 	gattPeripheral.registerError('34');
 }, Math.random()*100000)
+
 /*
 gattPeripheral.on('disconnect', function(clientAddress){
 	slog.push({

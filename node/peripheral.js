@@ -1,3 +1,7 @@
+/***
+* Advertises services as a peripheral. Used for dev testing, not in prototype
+*/
+
 process.env.BLENO_HCI_DEVICE_ID=1;
 
 var bleno = require('bleno'),
@@ -16,7 +20,6 @@ var gattPeripheralPromise = gattPeripheral.run()
 				console.log(err)
 			})
 			
-//TODO: Random time errors
 var i = 1;
 var randomErrGenerator = setInterval(function(){
 	i++;

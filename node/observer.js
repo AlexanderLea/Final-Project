@@ -1,3 +1,10 @@
+/***
+* Runs as GATT observer, connecting to devices
+*
+* NOTE: this class is purely for development and prototype testing 
+* - plays no role in the product
+*/
+
 process.env.NOBLE_HCI_DEVICE_ID=0;
 
 var noble = require('noble'),
@@ -26,16 +33,6 @@ noble.on('stateChange', function(state) {
 		.catch(function(err) {
 			console.log('err', err)
 		})
-/*
-		gattObserver.run(['c4:4f:b7:b1:41:d7'], function(err){
-			if(err){
-				slog.push({
-					source: 'observer', 
-					message: 'error: ' + err, 
-					priority: 'err'
-				});
-			}
-		});*/
 	}	
 });
 
