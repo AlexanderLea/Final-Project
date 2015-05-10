@@ -99,7 +99,7 @@ gattObserver.on('data-recieved', function(data) {
 	//console.log('data recieved!: ', data.toString('hex'));
 });
 
-//TODO: Random time errors
+//Random time errors
 var randomErrGenerator = setInterval(function(){
 	gattPeripheral.registerError('34');
 }, Math.random()*100000)
